@@ -24,7 +24,15 @@ class BaseBunny(object):
         return r
 
     def _FormatResponse(self, r):
-        if r.status_code != 200:
+        if r.status_code == 201:
+            response = {
+                "status": "successfully created",
+                "status_code": r.status_code,
+                "result": None,
+            }
+            return json.dumps(response)
+            
+        elif r.status_code != 200:
             response = {
                 "status": "error",
                 "status_code": r.status_code,
