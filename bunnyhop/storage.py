@@ -18,7 +18,7 @@ class Storage(BaseBunny):
         api_url = self._URL + '/storagezone'
         header = self._GetHeaders()
         response = self._CallApi(api_url, "GET", header)
-        return self._FormatResponse(response)
+        return response.text
 
     def delete(self, id):
         api_url = self._URL + '/storagezone/' + id
