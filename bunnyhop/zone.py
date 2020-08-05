@@ -22,7 +22,7 @@ class Zone(BaseBunny):
         return self._FormatResponse(response)
 
     def list(self):
-        api_url = "self._URL + '/pullzone'"
+        api_url = self._URL + '/pullzone'
         header = self._GetHeaders()
         response = self._CallApi(api_url, "GET", header)
         return response.text
