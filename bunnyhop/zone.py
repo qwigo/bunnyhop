@@ -7,7 +7,7 @@ class Zone(BaseBunny):
         api_url = self._URL + '/pullzone/' + id
         header = self._GetHeaders()
         response = self._CallApi(api_url, "GET", header)
-        return self._FormatResponse(response)
+        return response.text
 
     def create(self, Name, OriginUrl, StorageZoneId, Type=0):
         api_url = self._URL + '/pullzone'
