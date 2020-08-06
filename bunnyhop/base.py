@@ -5,7 +5,7 @@ class BaseBunny(object):
 
     def __init__(self, api_key):
         self.api_key = api_key
-        self.endpoint_url = "https://bunnycdn.com/api"
+        self.endpoint_url = "https://private-anon-6e7694596b-bunnycdn.apiary-mock.com/api"
 
     def get_header(self):
         header = {
@@ -15,12 +15,7 @@ class BaseBunny(object):
         return header
 
     def call_api(self, api_url, api_method, header, api_data={}):
-        if api_method == "GET":
-            r = requests.get(api_url, headers=header, params=api_data)
-        elif api_method == "POST":
-            r = requests.post(api_url, headers=header, json=api_data)
-        elif api_method == "DELETE":
-            r = requests.delete(api_url, headers=header, params=api_data)
+        r = requests.request(method=api_method, url=api_url, headers=header, params=api_data)
         return self.format_response(r)
 
     def format_response(self, r):
