@@ -5,13 +5,13 @@ class Zone(BaseBunny):
 
     def get(self, id):
         api_url = self._URL + '/pullzone/' + id
-        header = self._GetHeaders()
+        header = self.get_header()
         response = self._CallApi(api_url, "GET", header)
         return response.text
 
     def create(self, Name, OriginUrl, StorageZoneId, Type=0):
         api_url = self._URL + '/pullzone'
-        header = self._GetHeaders()
+        header = self.get_header()
         api_data = {
             'Name': Name,
             'Type': Type,
@@ -23,7 +23,7 @@ class Zone(BaseBunny):
 
     def list(self):
         api_url = self._URL + '/pullzone'
-        header = self._GetHeaders()
+        header = self.get_header()
         response = self._CallApi(api_url, "GET", header)
         return response.text
 
@@ -63,7 +63,7 @@ class Zone(BaseBunny):
                 EnableTLS1,
                 EnableTLS1_1):
         api_url = self._URL + '/pullzone/' + id
-        header = self._GetHeaders()
+        header = self.get_header()
         api_data = {
             "OriginUrl": OriginUrl,
             "AllowedReferrers": AllowedReferrers,
@@ -104,13 +104,13 @@ class Zone(BaseBunny):
 
     def delete(self, id):
         api_url = self._URL + '/pullzone/' + id
-        header = self._GetHeaders()
+        header = self.get_header()
         response = self._CallApi(api_url, "DELETE", header)
         return self._FormatResponse(response)
 
     def purge(self, id):
         api_url = self._URL + '/pullzone/' + id + '/purgeCache'
-        header = self._GetHeaders()
+        header = self.get_header()
         response = self._CallApi(api_url, "POST", header, {})
         return self._FormatResponse(response)
 
@@ -126,7 +126,7 @@ class Zone(BaseBunny):
                          TriggerMatchingType,
                          Triggers):
         api_url = self._URL + '/pullzone/' + id + '/edgerules/addOrUpdate'
-        header = self._GetHeaders()
+        header = self.get_header()
         api_data = {
             "Guid": Guid,
             "ActionParameter1": ActionParameter1,

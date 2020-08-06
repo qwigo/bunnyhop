@@ -5,6 +5,6 @@ class Stats(BaseBunny):
     
     def get(self, dateFrom, dateTo, pullZone, serverZoneId):
         api_url = self._URL + '/statistics?dateFrom=/' + dateFrom + '&dateTo=' + dateTo + '&pullZone=' + pullZone + '&serverZoneId=' + serverZoneId
-        header = self._GetHeaders()
+        header = self.get_header()
         response = self._CallApi(api_url, "GET", header)
         return self._FormatResponse(response)

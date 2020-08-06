@@ -5,6 +5,6 @@ class StorageZone(BaseBunny):
     
     def get(self, id):
         api_url = self._URL + '/storagezone/' + id
-        header = self._GetHeaders()
+        header = self.get_header()
         response = self._CallApi(api_url, "GET", header)
         return response.text

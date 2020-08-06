@@ -7,7 +7,7 @@ class BaseBunny(object):
         self.api_key = api_key
         self._URL = "https://bunnycdn.com/api"
 
-    def _GetHeaders(self):
+    def get_header(self):
         header = {
             'Content-Type': 'application/json',
             'accesskey': self.api_key
