@@ -1,11 +1,12 @@
 import requests
 import json
+from .url_settings import *
 
 class BaseBunny(object):
 
     def __init__(self, api_key):
         self.api_key = api_key
-        self.endpoint_url = "https://private-anon-6e7694596b-bunnycdn.apiary-mock.com/api"
+        self.endpoint_url = bunnycdn_url
 
     def get_header(self):
         header = {
@@ -20,6 +21,7 @@ class BaseBunny(object):
             return self.format_response(r)
         else:
             return r
+
     def format_response(self, r):
         if r.status_code == 201 or r.status_code == 200 or r.status_code == 204:
             response = {
