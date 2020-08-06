@@ -4,66 +4,57 @@ from bunnyhop.base import BaseBunny
 class Zone(BaseBunny):
 
     def get(self, id):
-        api_url = self.endpoint_url + '/pullzone/' + id
-        header = self.get_header()
-        response = self.call_api(api_url, "GET", header)
-        return response.text
-
+        return self.call_api(f"{self.endpoint_url}/pullzone/{id}", "GET", self.get_header())
+    
     def create(self, Name, OriginUrl, StorageZoneId, Type=0):
-        api_url = self.endpoint_url + '/pullzone'
-        header = self.get_header()
         api_data = {
             'Name': Name,
             'Type': Type,
             'OriginUrl': OriginUrl,
             'StorageZoneId': StorageZoneId
         }
-        response = self.call_api(api_url, "POST", header, api_data)
-        return self.format_response(response)
+        return self.call_api(f"{self.endpoint_url}/pullzone", "POST", self.get_header(), api_data)
+    
 
     def list(self):
-        api_url = self.endpoint_url + '/pullzone'
-        header = self.get_header()
-        response = self.call_api(api_url, "GET", header)
-        return response.text
+        return self.call_api(f"{self.endpoint_url}/pullzone", "GET", self.get_header())
+    
 
     def update(
                 self,
                 id,
-                OriginUrl,
-                AllowedReferrers,
-                BlockedIps,
-                EnableCacheSlice,
-                EnableGeoZoneUS,
-                EnableGeoZoneEU,
-                EnableGeoZoneASIA,
-                EnableGeoZoneSA,
-                EnableGeoZoneAF,
-                ZoneSecurityEnabled,
-                ZoneSecurityIncludeHashRemoteIP,
-                IgnoreQueryStrings,
-                MonthlyBandwidthLimit,
-                AccessControlOriginHeaderExtensions,
-                EnableAccessControlOriginHeader,
-                BlockRootPathAccess,
-                EnableWebpVary,
-                EnableLogging,
-                DisableCookies,
-                BudgetRedirectedCountries,
-                BlockedCountries,
-                EnableOriginShield,
-                OriginShieldZoneCode,
-                AddCanonicalHeader,
-                CacheControlMaxAgeOverride,
-                AddHostHeader,
-                AWSSigningEnabled,
-                AWSSigningKey,
-                AWSSigningRegionName,
-                AWSSigningSecret,
-                EnableTLS1,
-                EnableTLS1_1):
-        api_url = self.endpoint_url + '/pullzone/' + id
-        header = self.get_header()
+                OriginUrl=None,
+                AllowedReferrers=None,
+                BlockedIps=None,
+                EnableCacheSlice=None,
+                EnableGeoZoneUS=None,
+                EnableGeoZoneEU=None,
+                EnableGeoZoneASIA=None,
+                EnableGeoZoneSA=None,
+                EnableGeoZoneAF=None,
+                ZoneSecurityEnabled=None,
+                ZoneSecurityIncludeHashRemoteIP=None,
+                IgnoreQueryStrings=None,
+                MonthlyBandwidthLimit=None,
+                AccessControlOriginHeaderExtensions=None,
+                EnableAccessControlOriginHeader=None,
+                BlockRootPathAccess=None,
+                EnableWebpVary=None,
+                EnableLogging=None,
+                DisableCookies=None,
+                BudgetRedirectedCountries=None,
+                BlockedCountries=None,
+                EnableOriginShield=None,
+                OriginShieldZoneCode=None,
+                AddCanonicalHeader=None,
+                CacheControlMaxAgeOverride=None,
+                AddHostHeader=None,
+                AWSSigningEnabled=None,
+                AWSSigningKey=None,
+                AWSSigningRegionName=None,
+                AWSSigningSecret=None,
+                EnableTLS1=None,
+                EnableTLS1_1=None):
         api_data = {
             "OriginUrl": OriginUrl,
             "AllowedReferrers": AllowedReferrers,
@@ -99,34 +90,27 @@ class Zone(BaseBunny):
             "EnableTLS1": EnableTLS1,
             "EnableTLS1_1": EnableTLS1_1
             }
-        response = self.call_api(api_url, "POST", header, api_data)
-        return self.format_response(response)
+        return self.call_api(f"{self.endpoint_url}/pullzone/{id}", "POST", self.get_header(), api_data)
+    
 
     def delete(self, id):
-        api_url = self.endpoint_url + '/pullzone/' + id
-        header = self.get_header()
-        response = self.call_api(api_url, "DELETE", header)
-        return self.format_response(response)
+        return self.call_api(f"{self.endpoint_url}/pullzone/{id}", "DELETE", self.get_header())
 
     def purge(self, id):
-        api_url = self.endpoint_url + '/pullzone/' + id + '/purgeCache'
-        header = self.get_header()
-        response = self.call_api(api_url, "POST", header, {})
-        return self.format_response(response)
+        return self.call_api(f"{self.endpoint_url}/pullzone/{id}/purgeCache", "POST", self.get_header())
+    
 
     def create_edge_rule(
                          self,
                          id,
-                         Guid,
-                         ActionParameter1,
-                         ActionParameter2,
-                         Enabled,
-                         Description,
-                         ActionType,
-                         TriggerMatchingType,
-                         Triggers):
-        api_url = self.endpoint_url + '/pullzone/' + id + '/edgerules/addOrUpdate'
-        header = self.get_header()
+                         Guid=None,
+                         ActionParameter1=None,
+                         ActionParameter2=None,
+                         Enabled=None,
+                         Description=None,
+                         ActionType=None,
+                         TriggerMatchingType=None,
+                         Triggers=None):
         api_data = {
             "Guid": Guid,
             "ActionParameter1": ActionParameter1,
@@ -137,5 +121,5 @@ class Zone(BaseBunny):
             "TriggerMatchingType": TriggerMatchingType,
             "Triggers": Triggers
                     }
-        response = self.call_api(api_url, "POST", header, api_data)
-        return self.format_response(response)
+        return self.call_api(f"{self.endpoint_url}/pullzone/{id}/edgerules/addOrUpdate", "POST", self.get_header(), api_data)
+    
