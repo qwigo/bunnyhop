@@ -14,10 +14,12 @@ class BaseBunny(object):
         }
         return header
 
-    def call_api(self, api_url, api_method, header, api_data={}):
+    def call_api(self, api_url, api_method, header, api_data={}, format=True):
         r = requests.request(method=api_method, url=api_url, headers=header, params=api_data)
-        return self.format_response(r)
-
+        if format:
+            return self.format_response(r)
+        else:
+            return r
     def format_response(self, r):
         if r.status_code == 201 or r.status_code == 200 or r.status_code == 204:
             response = {
