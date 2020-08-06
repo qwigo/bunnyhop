@@ -4,13 +4,13 @@ from bunnyhop.base import BaseBunny
 class Zone(BaseBunny):
 
     def get(self, id):
-        api_url = self._URL + '/pullzone/' + id
+        api_url = self.endpoint_url + '/pullzone/' + id
         header = self.get_header()
         response = self._CallApi(api_url, "GET", header)
         return response.text
 
     def create(self, Name, OriginUrl, StorageZoneId, Type=0):
-        api_url = self._URL + '/pullzone'
+        api_url = self.endpoint_url + '/pullzone'
         header = self.get_header()
         api_data = {
             'Name': Name,
@@ -22,7 +22,7 @@ class Zone(BaseBunny):
         return self._FormatResponse(response)
 
     def list(self):
-        api_url = self._URL + '/pullzone'
+        api_url = self.endpoint_url + '/pullzone'
         header = self.get_header()
         response = self._CallApi(api_url, "GET", header)
         return response.text
@@ -62,7 +62,7 @@ class Zone(BaseBunny):
                 AWSSigningSecret,
                 EnableTLS1,
                 EnableTLS1_1):
-        api_url = self._URL + '/pullzone/' + id
+        api_url = self.endpoint_url + '/pullzone/' + id
         header = self.get_header()
         api_data = {
             "OriginUrl": OriginUrl,
@@ -103,13 +103,13 @@ class Zone(BaseBunny):
         return self._FormatResponse(response)
 
     def delete(self, id):
-        api_url = self._URL + '/pullzone/' + id
+        api_url = self.endpoint_url + '/pullzone/' + id
         header = self.get_header()
         response = self._CallApi(api_url, "DELETE", header)
         return self._FormatResponse(response)
 
     def purge(self, id):
-        api_url = self._URL + '/pullzone/' + id + '/purgeCache'
+        api_url = self.endpoint_url + '/pullzone/' + id + '/purgeCache'
         header = self.get_header()
         response = self._CallApi(api_url, "POST", header, {})
         return self._FormatResponse(response)
@@ -125,7 +125,7 @@ class Zone(BaseBunny):
                          ActionType,
                          TriggerMatchingType,
                          Triggers):
-        api_url = self._URL + '/pullzone/' + id + '/edgerules/addOrUpdate'
+        api_url = self.endpoint_url + '/pullzone/' + id + '/edgerules/addOrUpdate'
         header = self.get_header()
         api_data = {
             "Guid": Guid,

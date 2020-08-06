@@ -5,7 +5,7 @@ class BaseBunny(object):
 
     def __init__(self, api_key):
         self.api_key = api_key
-        self._URL = "https://bunnycdn.com/api"
+        self.endpoint_url = "https://bunnycdn.com/api"
 
     def get_header(self):
         header = {
