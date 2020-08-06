@@ -6,7 +6,7 @@ class Zone(BaseBunny):
     def get(self, id):
         api_url = self.endpoint_url + '/pullzone/' + id
         header = self.get_header()
-        response = self._CallApi(api_url, "GET", header)
+        response = self.call_api(api_url, "GET", header)
         return response.text
 
     def create(self, Name, OriginUrl, StorageZoneId, Type=0):
@@ -18,13 +18,13 @@ class Zone(BaseBunny):
             'OriginUrl': OriginUrl,
             'StorageZoneId': StorageZoneId
         }
-        response = self._CallApi(api_url, "POST", header, api_data)
+        response = self.call_api(api_url, "POST", header, api_data)
         return self._FormatResponse(response)
 
     def list(self):
         api_url = self.endpoint_url + '/pullzone'
         header = self.get_header()
-        response = self._CallApi(api_url, "GET", header)
+        response = self.call_api(api_url, "GET", header)
         return response.text
 
     def update(
@@ -99,19 +99,19 @@ class Zone(BaseBunny):
             "EnableTLS1": EnableTLS1,
             "EnableTLS1_1": EnableTLS1_1
             }
-        response = self._CallApi(api_url, "POST", header, api_data)
+        response = self.call_api(api_url, "POST", header, api_data)
         return self._FormatResponse(response)
 
     def delete(self, id):
         api_url = self.endpoint_url + '/pullzone/' + id
         header = self.get_header()
-        response = self._CallApi(api_url, "DELETE", header)
+        response = self.call_api(api_url, "DELETE", header)
         return self._FormatResponse(response)
 
     def purge(self, id):
         api_url = self.endpoint_url + '/pullzone/' + id + '/purgeCache'
         header = self.get_header()
-        response = self._CallApi(api_url, "POST", header, {})
+        response = self.call_api(api_url, "POST", header, {})
         return self._FormatResponse(response)
 
     def create_edge_rule(
@@ -137,5 +137,5 @@ class Zone(BaseBunny):
             "TriggerMatchingType": TriggerMatchingType,
             "Triggers": Triggers
                     }
-        response = self._CallApi(api_url, "POST", header, api_data)
+        response = self.call_api(api_url, "POST", header, api_data)
         return self._FormatResponse(response)

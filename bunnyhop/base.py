@@ -14,7 +14,7 @@ class BaseBunny(object):
         }
         return header
 
-    def _CallApi(self, api_url, api_method, header, api_data={}):
+    def call_api(self, api_url, api_method, header, api_data={}):
         if api_method == "GET":
             r = requests.get(api_url, headers=header, params=api_data)
         elif api_method == "POST":

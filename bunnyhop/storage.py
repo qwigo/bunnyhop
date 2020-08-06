@@ -11,23 +11,23 @@ class Storage(BaseBunny):
             'Region': main_storage_region,
             'ReplicationRegions': replica_regions,
         }
-        response = self._CallApi(api_url, "POST", header, api_data)
+        response = self.call_api(api_url, "POST", header, api_data)
         return self._FormatResponse(response)
 
     def all(self):
         api_url = self.endpoint_url + '/storagezone'
         header = self.get_header()
-        response = self._CallApi(api_url, "GET", header)
+        response = self.call_api(api_url, "GET", header)
         return response.text
 
     def delete(self, id):
         api_url = self.endpoint_url + '/storagezone/' + id
         header = self.get_header()
-        response = self._CallApi(api_url, "DELETE", header)
+        response = self.call_api(api_url, "DELETE", header)
         return self._FormatResponse(response)
 
     def get(self, id):
         api_url = self.endpoint_url + '/storagezone/' + id
         header = self.get_header()
-        response = self._CallApi(api_url, "GET", header)
+        response = self.call_api(api_url, "GET", header)
         return response.text
