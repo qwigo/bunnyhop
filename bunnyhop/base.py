@@ -21,7 +21,7 @@ class BaseBunny(object):
             r = requests.post(api_url, headers=header, json=api_data)
         elif api_method == "DELETE":
             r = requests.delete(api_url, headers=header, params=api_data)
-        return r
+        return self.format_response(r)
 
     def format_response(self, r):
         if r.status_code == 201:
