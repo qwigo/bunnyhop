@@ -21,7 +21,7 @@ class BaseBunny(object):
     def format_response(self, r):
         if r.status_code == 201:
             response = {
-                "status": "successfull",
+                "status": "successful",
                 "status_code": r.status_code,
                 "result": None,
             }
