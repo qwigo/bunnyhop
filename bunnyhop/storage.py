@@ -9,7 +9,7 @@ class Storage(BaseBunny):
             'Region': main_storage_region,
             'ReplicationRegions': replica_regions,
         }
-        return self.call_api(f"{self.endpoint_url}/storagezone/", "POST", self.get_header(), api_data)
+        return self.call_api(f"{self.endpoint_url}/storagezone", "POST", self.get_header(), api_data)
         
 
     def all(self):
