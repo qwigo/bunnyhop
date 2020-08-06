@@ -1,5 +1,6 @@
 from bunnyhop.base import BaseBunny
 import json
+import os
 
 class StorageZone(BaseBunny):
     
@@ -15,26 +16,32 @@ class StorageObject(BaseBunny):
         self.zone_name = zone_name
         self.endpoint_url = "https://private-anon-3bc35a36a9-bunnycdnstorage.apiary-mock.com/"
     
-    def get_header(self):
-        header = {
-            'Content-Type': 'application/json',
-        }
-        return header
-    
     def all(self, path):
-        return self.call_api(f"{self.endpoint_url}/{self.zone_name}/{path}", "GET", self.get_header())
+        header = {
+            'Accept': 'application/json',
+        }
+        return self.call_api(f"{self.endpoint_url}/{self.zone_name}/{path}", "GET", header)
     
-    def get(self):
-        pass
+    def get(self, path, file_name):
+        return self.call_api(f"{self.endpoint_url}/{self.zone_name}/{path}/{file_name}", "GET", {})
     
-    def download(self):
-        pass
+    def delete(self, path, file_name):
+        return self.call_api(f"{self.endpoint_url}/{self.zone_name}/{path}/{file_name}", "DELETE", {})
     
-    def delete(self):
-        pass
-    
-    def upload_file(self):
-        pass
+    def upload_file(self, dest_path, local_path):
+        header = {
+            'Checksum': None,
+        }
+        return self.call_api(f"{self.endpoint_url}/{self.zone_name}/{dest_path}/{local_path}", "PUT", header)
 
-    def create_json(self):
-        pass
+    def create_file(self, file_name, content):
+        f = open(file_name, 'w+')
+        f.write(content)
+        f.close()
+        return f"file name: {file_name}, path: {os.path.dirname(os.path.abspath(file_name))}"
+    
+    def create_json(self, file_name, content):
+        with open(file_name, 'w+') as f:
+            json.dump(content, f)
+        return f"file name: {file_name}, path: {os.path.dirname(os.path.abspath(file_name))}"
+        
