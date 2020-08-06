@@ -19,25 +19,18 @@ class BaseBunny(object):
         return self.format_response(r)
 
     def format_response(self, r):
-        if r.status_code == 201:
+        if r.status_code == 201 or r.status_code == 200 or r.status_code == 204:
             response = {
                 "status": "successful",
                 "status_code": r.status_code,
-                "result": None,
+                "result": r.text,
             }
             return json.dumps(response)
             
-        elif r.status_code != 200:
+        else:
             response = {
                 "status": "error",
                 "status_code": r.status_code,
                 "result": None,
-            }
-            return json.dumps(response)
-        else:
-            response = {
-                "status": "success",
-                "status_code": r.status_code,
-                "result": r.text,
             }
             return json.dumps(response)
