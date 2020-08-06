@@ -7,4 +7,4 @@ class Purge(BaseBunny):
         api_url = self.endpoint_url + '/purge?url=' + url
         header = self.get_header()
         response = self.call_api(api_url, "POST", header)
-        return self._FormatResponse(response)
+        return self.format_response(response)

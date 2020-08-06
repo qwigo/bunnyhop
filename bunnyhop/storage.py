@@ -12,7 +12,7 @@ class Storage(BaseBunny):
             'ReplicationRegions': replica_regions,
         }
         response = self.call_api(api_url, "POST", header, api_data)
-        return self._FormatResponse(response)
+        return self.format_response(response)
 
     def all(self):
         api_url = self.endpoint_url + '/storagezone'
@@ -24,7 +24,7 @@ class Storage(BaseBunny):
         api_url = self.endpoint_url + '/storagezone/' + id
         header = self.get_header()
         response = self.call_api(api_url, "DELETE", header)
-        return self._FormatResponse(response)
+        return self.format_response(response)
 
     def get(self, id):
         api_url = self.endpoint_url + '/storagezone/' + id

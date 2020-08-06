@@ -7,4 +7,4 @@ class Stats(BaseBunny):
         api_url = self.endpoint_url + '/statistics?dateFrom=/' + dateFrom + '&dateTo=' + dateTo + '&pullZone=' + pullZone + '&serverZoneId=' + serverZoneId
         header = self.get_header()
         response = self.call_api(api_url, "GET", header)
-        return self._FormatResponse(response)
+        return self.format_response(response)

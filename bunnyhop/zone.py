@@ -19,7 +19,7 @@ class Zone(BaseBunny):
             'StorageZoneId': StorageZoneId
         }
         response = self.call_api(api_url, "POST", header, api_data)
-        return self._FormatResponse(response)
+        return self.format_response(response)
 
     def list(self):
         api_url = self.endpoint_url + '/pullzone'
@@ -100,19 +100,19 @@ class Zone(BaseBunny):
             "EnableTLS1_1": EnableTLS1_1
             }
         response = self.call_api(api_url, "POST", header, api_data)
-        return self._FormatResponse(response)
+        return self.format_response(response)
 
     def delete(self, id):
         api_url = self.endpoint_url + '/pullzone/' + id
         header = self.get_header()
         response = self.call_api(api_url, "DELETE", header)
-        return self._FormatResponse(response)
+        return self.format_response(response)
 
     def purge(self, id):
         api_url = self.endpoint_url + '/pullzone/' + id + '/purgeCache'
         header = self.get_header()
         response = self.call_api(api_url, "POST", header, {})
-        return self._FormatResponse(response)
+        return self.format_response(response)
 
     def create_edge_rule(
                          self,
@@ -138,4 +138,4 @@ class Zone(BaseBunny):
             "Triggers": Triggers
                     }
         response = self.call_api(api_url, "POST", header, api_data)
-        return self._FormatResponse(response)
+        return self.format_response(response)

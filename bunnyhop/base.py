@@ -23,7 +23,7 @@ class BaseBunny(object):
             r = requests.delete(api_url, headers=header, params=api_data)
         return r
 
-    def _FormatResponse(self, r):
+    def format_response(self, r):
         if r.status_code == 201:
             response = {
                 "status": "successfully created",
