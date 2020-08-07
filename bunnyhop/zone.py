@@ -6,7 +6,7 @@ class Zone(BaseBunny):
     def get(self, id):
         return self.call_api(f"{self.endpoint_url}/pullzone/{id}", "GET", self.get_header())
     
-    def create(self, Name, OriginUrl, StorageZoneId, Type=0):
+    def create(self, Name=None, OriginUrl=None, StorageZoneId=None, Type=None):
         api_data = {
             'Name': Name,
             'Type': Type,
