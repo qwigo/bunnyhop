@@ -39,5 +39,20 @@ class TestStats(unittest.TestCase):
             self.assertEqual(response_json['status_code'], 200)
 
 
+class TestPurge(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(self):
+        self.b = Bunny('api-key')
+
+    @classmethod
+    def tearDownClass(self):
+        self.b = None
+
+    def test_get(self):
+            response_json = json.loads(self.b.Purge.create(url='https://myzone.b-cdn.net/style.css'))
+            self.assertEqual(response_json['status_code'], 200)
+
+
 if __name__ == '__main__': 
     unittest.main()
