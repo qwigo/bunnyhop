@@ -79,7 +79,8 @@ class TestStorageObject(unittest.TestCase):
     @classmethod
     def tearDownClass(self):
         self.b = None
-
+        self.zone = None
+        
     def test_all(self):
         response_json = json.loads(self.zone.all('path'))
         self.assertEqual(response_json['status_code'], 200)
@@ -113,6 +114,35 @@ class TestStorageObject(unittest.TestCase):
             self.zone.create_json(json_name, json_content)
         open_mock.assert_called_with(json_name, "w+")
         open_mock.return_value.write.assert_called_with('}')
+
+
+class TestStorage(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(self):
+        self.b = Bunny('api-key')
+
+    @classmethod
+    def tearDownClass(self):
+        self.b = None
+
+    def test_create(self):
+        response_json = json.loads(self.b.Storage.create())
+        self.assertEqual(response_json['status_code'], 201)
+        response_json = json.loads(self.b.Storage.create(name='example-a', main_storage_region='NY', replica_regions=['DE', 'SG', 'SYD']))
+        self.assertEqual(response_json['status_code'], 201)
+
+    def test_all(self):
+        response_json = json.loads(self.b.Storage.all())
+        self.assertEqual(response_json['status_code'], 200)
+
+    def test_delete(self):
+        response_json = json.loads(self.b.Storage.delete(1234))
+        self.assertEqual(response_json['status_code'], 201)
+
+    def test_get(self):
+        response_json = json.loads(self.b.Storage.get(1234))
+        self.assertEqual(response_json['status_code'], 200)
 
 
 if __name__ == '__main__': 
