@@ -3,7 +3,7 @@ from bunnyhop.base import BaseBunny
 
 class Storage(BaseBunny):
 
-    def create(self, name, main_storage_region, replica_regions):
+    def create(self, name=None, main_storage_region=None, replica_regions=None):
         api_data = {
             'Name': name,
             'Region': main_storage_region,
