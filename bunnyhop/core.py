@@ -1,9 +1,8 @@
-from bunnyhop.storage import Storage
+from bunnyhop.storage import Storage, StorageZone
 from bunnyhop.zone import Zone
 from bunnyhop.stats import Stats
 from bunnyhop.billing import Billing
 from bunnyhop.purge import Purge
-from bunnyhop.storage_zone import StorageZone
 
 class Bunny(object):
 

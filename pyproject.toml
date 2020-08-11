@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "bunnyhop"
+version = "0.1.0"
+description = "A Python library created make building with BunnyCDN easier"
+authors = ["Brian Jinwright"]
+license = "Apache-2.0"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+valley = "^1.5.5"
+envs = "^1.3"
+requests = "^2.23.0"
+
+[tool.poetry.dev-dependencies]
+jupyter = "^1.0.0"
+
+[build-system]
+requires = ["poetry>=0.12"]

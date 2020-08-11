@@ -2,7 +2,7 @@ import unittest
 import json
 from unittest.mock import patch, mock_open
 from bunnyhop import Bunny
-from bunnyhop.storage_zone import StorageObject
+from bunnyhop.storage import StorageObject
 
 
 class TestBilling(unittest.TestCase):
