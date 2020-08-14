@@ -2,8 +2,8 @@ from bunnyhop.base import BaseBunny
 
 
 class Stats(BaseBunny):
-    
-    def get(self, dateFrom, dateTo, pullZone, serverZoneId):
-        api_url = f"{self.endpoint_url}/statistics?dateFrom=/{dateFrom}&dateTo={dateTo}&pullZone={pullZone}&serverZoneId={serverZoneId}"
-        header = self.get_header()
-        return self.call_api(api_url, "GET", header)
+
+    def get(self, date_from, date_to, pull_zone, server_zone_id):
+        return self.call_api(
+            f"/statistics?dateFrom={date_from}&dateTo={date_to}&pullZone={pull_zone}&serverZoneId={server_zone_id}",
+            "GET")

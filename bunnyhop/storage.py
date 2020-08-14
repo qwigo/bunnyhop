@@ -8,28 +8,58 @@ from bunnyhop import base
 
 class Storage(base.BaseBunny):
 
-    def create(self, name, main_storage_region=None, replica_regions=None):
+    def create(self, name, main_storage_region: str = None, replica_regions: list = None):
         api_data = {
-            'Name': name
+            'Name': name,
+            'Region': main_storage_region,
+            'ReplicationRegions': replica_regions
         }
-        if main_storage_region:
-            api_data['Region'] = main_storage_region
-        if replica_regions:
-            api_data['ReplicationRegions'] = replica_regions
 
-        return self.call_api(f"{self.endpoint_url}/storagezone", "POST", self.get_header(), data=api_data)
+        response = self.call_api(f"/storagezone", "POST", json_data=api_data)
+        if response.get('Id', None):
+            return StorageZone(response.get('Password'), **response)
+        return response
 
     def all(self):
-        return [StorageZone(self.api_key, **i) for i in self.call_api(f"{self.endpoint_url}/storagezone", "GET", self.get_header())]
+        return [StorageZone(i.get('Password'), **i) for i in
+                self.call_api(f"/storagezone", "GET")]
 
     def delete(self, id):
-        return self.call_api(f"{self.endpoint_url}/storagezone/{id}", "DELETE", self.get_header())
+        return self.call_api(f"/storagezone/{id}", "DELETE")
 
     def get(self, id):
-        return self.call_api(f"{self.endpoint_url}/storagezone/{id}", "GET", self.get_header())
+        response = self.call_api(f"/storagezone/{id}", "GET")
+        if response.get('Id', None):
+            return StorageZone(response.get('Password'), **response)
+        return response
 
 
-class StorageZone(base.BaseBunny):
+class BaseStorageBunny(base.BaseBunny):
+    storage_endpoint_url = env('BUNNYCDN_STORAGE_API_ENDPOINT', 'storage.bunnycdn.com')
+
+    def get_storage_header(self):
+        return {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'AccessKey': self.api_key
+        }
+
+    def get_storage_endpoint(self, region):
+        return f"https://{region}.{self.storage_endpoint_url}"
+
+    def get_region(self):
+        return self.Region.lower()
+
+    def call_storage_api(self, api_url, api_method, header=None, params={}, data={}, json_data={}, endpoint_url=None):
+        if not header:
+            header = self.get_storage_header()
+        if not endpoint_url:
+            endpoint_url = self.get_storage_endpoint(self.get_region())
+        return self.call_api(api_url, api_method, header=header, params={}, data=params, json_data=json_data,
+                             endpoint_url=endpoint_url)
+
+
+class StorageZone(BaseStorageBunny):
     Id = base.IntegerProperty()
     UserId = base.CharProperty()
     Name = base.CharProperty()
@@ -47,46 +77,58 @@ class StorageZone(base.BaseBunny):
         return self.Name
 
     def delete(self):
-        return self.call_api(f"{self.endpoint_url}/storagezone/{self.Id}", "DELETE", self.get_header())
+        return self.call_api(f"/storagezone/{self.Id}", "DELETE")
+
+    def all(self, folder=''):
+        if not folder.endswith('/'):
+            folder = f"{folder}/"
+        return [StorageObject(self.api_key, self, **i) for i in self.call_storage_api(f"/{self.Name}/{folder}", "GET")]
+
+    def get(self, file_path):
+        return self.call_storage_api(f"/{self.Name}/{file_path}", "GET")
 
 
-class StorageObject(base.BaseBunny):
+class StorageObject(BaseStorageBunny):
     endpoint_url = env('BUNNYCDN_STORAGE_API_ENDPOINT', 'https://storage.bunnycdn.com')
+
+    Guid = base.SlugProperty(required=True)
+    StorageZoneName = base.CharProperty(required=True)
+    Path = base.CharProperty(required=True)
+    ObjectName = base.CharProperty(required=True)
+    Length = base.IntegerProperty()
+    LastChanged = base.DateTimeProperty()
+    ServerId = base.IntegerProperty()
+    IsDirectory = base.BooleanProperty()
+    UserId = base.SlugProperty(required=True)
+    ContentType = base.CharProperty()
+    DateCreated = base.DateTimeProperty()
+    StorageZoneId = base.IntegerProperty(required=True)
+    Checksum = base.CharProperty()
+    ReplicatedZones = base.ListProperty()
 
     def __init__(self,
                  api_key,
-                 zone_name,
+                 storage_zone,
                  endpoint_url=None,
                  **kwargs
                  ):
-        self.zone_name = zone_name
+        self.storage_zone = storage_zone
         super().__init__(api_key, endpoint_url=endpoint_url, **kwargs)
 
-    def all(self, path):
-        header = {
-            'Accept': 'application/json',
-        }
-        return self.call_api(f"{self.endpoint_url}/{self.zone_name}/{path}", "GET", header)
+    def __str__(self):
+        return f"{self.Path}{self.ObjectName}"
 
-    def get(self, path, file_name):
-        return self.call_api(f"{self.endpoint_url}/{self.zone_name}/{path}/{file_name}", "GET", {})
+    def get_region(self):
+        return self.storage_zone.Region.lower()
 
-    def delete(self, path, file_name):
-        return self.call_api(f"{self.endpoint_url}/{self.zone_name}/{path}/{file_name}", "DELETE", {})
+    def delete(self):
+        return self.call_storage_api(f"/{self.storage_zone.Name}/{self.Path}/{self.ObjectName}", "DELETE")
 
     def upload_file(self, dest_path, local_path):
-        header = {
-            'Checksum': None,
-        }
-        return self.call_api(f"{self.endpoint_url}/{self.zone_name}/{dest_path}/{local_path}", "PUT", header)
+        pass
 
     def create_file(self, file_name, content):
-        f = open(file_name, 'w+')
-        f.write(content)
-        f.close()
-        return f"file name: {file_name}, path: {os.path.dirname(os.path.abspath(file_name))}"
+        pass
 
-    def create_json(self, file_name, content):
-        with open(file_name, 'w+') as f:
-            json.dump(content, f)
-        return f"file name: {file_name}, path: {os.path.dirname(os.path.abspath(file_name))}"
+    def create_json(self, key, content):
+        pass

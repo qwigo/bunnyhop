@@ -2,13 +2,12 @@ from bunnyhop import base
 
 
 class Billing(base.BaseBunny):
-    
+
     def get(self):
+        return BillingSummary(self.api_key, **self.call_api(f"/billing", "GET"))
 
-        return BillingSummary(self.api_key, **self.call_api(f"{self.endpoint_url}/billing", "GET", self.get_header()))
-
-    def applycode(self, couponCode):
-        return self.call_api(f"{self.endpoint_url}/billing/applycode?couponCode={couponCode}", "GET", self.get_header())
+    def apply_code(self, coupon_code):
+        return self.call_api(f"/billing/applycode?couponCode={coupon_code}", "GET")
 
 
 class BillingRecord(base.BaseBunny):
@@ -20,6 +19,9 @@ class BillingRecord(base.BaseBunny):
     Type = base.IntegerProperty()
     InvoiceAvailable = base.BooleanProperty()
 
+    def __str__(self):
+        return f"{self.Id} - {self.Amount}"
+
 
 class BillingSummary(base.BaseBunny):
     Balance = base.FloatProperty(required=True)
@@ -30,6 +32,9 @@ class BillingSummary(base.BaseBunny):
     MonthlyChargesUSTraffic = base.FloatProperty(required=True)
     MonthlyChargesASIATraffic = base.FloatProperty(required=True)
     MonthlyChargesSATraffic = base.FloatProperty(required=True)
+
+    def __str__(self):
+        return f"{self.Balance}"
 
     @property
     def billing_records(self):
