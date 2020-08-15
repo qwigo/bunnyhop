@@ -50,13 +50,14 @@ class BaseStorageBunny(base.BaseBunny):
     def get_region(self):
         return self.Region.lower()
 
-    def call_storage_api(self, api_url, api_method, header=None, params={}, data={}, json_data={}, endpoint_url=None):
+    def call_storage_api(self, api_url, api_method, header=None, params={}, data={}, json_data={}, files={},
+                         endpoint_url=None):
         if not header:
             header = self.get_storage_header()
         if not endpoint_url:
             endpoint_url = self.get_storage_endpoint(self.get_region())
         return self.call_api(api_url, api_method, header=header, params={}, data=params, json_data=json_data,
-                             endpoint_url=endpoint_url)
+                             endpoint_url=endpoint_url, files=files)
 
 
 class StorageZone(BaseStorageBunny):
@@ -64,14 +65,14 @@ class StorageZone(BaseStorageBunny):
     UserId = base.CharProperty()
     Name = base.CharProperty()
     Password = base.CharProperty()
-    DateModified = base.DateTimeProperty()
-    Deleted = base.BooleanProperty()
-    StorageUsed = base.IntegerProperty()
-    FilesStored = base.IntegerProperty()
+    DateModified = base.DateTimeProperty(required=False)
+    Deleted = base.BooleanProperty(default_value=False)
+    StorageUsed = base.IntegerProperty(required=False)
+    FilesStored = base.IntegerProperty(required=False)
     Region = base.CharProperty()
     ReplicationRegions = base.ListProperty()
     PullZones = base.ListProperty()
-    ReadOnlyPassword = base.CharProperty()
+    ReadOnlyPassword = base.CharProperty(required=False)
 
     def __str__(self):
         return self.Name
@@ -86,6 +87,16 @@ class StorageZone(BaseStorageBunny):
 
     def get(self, file_path):
         return self.call_storage_api(f"/{self.Name}/{file_path}", "GET")
+
+    def upload_file(self, dest_path, file_name, local_path):
+        return self.call_storage_api(f"/{self.Name}/{dest_path}/{file_name}", "PUT",
+                                     files={'file': open(local_path, 'rb')})
+
+    def create_file(self, file_name, content):
+        pass
+
+    def create_json(self, key, content):
+        pass
 
 
 class StorageObject(BaseStorageBunny):
@@ -124,11 +135,4 @@ class StorageObject(BaseStorageBunny):
     def delete(self):
         return self.call_storage_api(f"/{self.storage_zone.Name}/{self.Path}/{self.ObjectName}", "DELETE")
 
-    def upload_file(self, dest_path, local_path):
-        pass
 
-    def create_file(self, file_name, content):
-        pass
-
-    def create_json(self, key, content):
-        pass

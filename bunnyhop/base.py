@@ -41,12 +41,12 @@ class BaseBunny(Schema):
             url = f"{self.endpoint_url}{api_url}"
         return url
 
-    def call_api(self, api_url, api_method, header=None, params={}, data={}, json_data={}, endpoint_url=None):
+    def call_api(self, api_url, api_method, header=None, params={}, data={}, json_data={}, files={}, endpoint_url=None):
         if not header:
             header = self.get_header()
         r = requests.request(
                 method=api_method, url=self.get_url(api_url, endpoint_url), headers=header, params=params, data=data,
-                json=json_data)
+                json=json_data, files=files)
         try:
             return r.json()
         except JSONDecodeError:
