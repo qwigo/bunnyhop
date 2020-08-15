@@ -6,7 +6,7 @@ from envs import env
 from valley.contrib import Schema
 # Imports for other modules
 from valley.properties import FloatProperty, CharProperty, ListProperty, IntegerProperty, EmailProperty, \
-    DateTimeProperty, BooleanProperty, SlugProperty
+    DateTimeProperty, BooleanProperty, SlugProperty, DictProperty
 
 
 class BaseBunny(Schema):
