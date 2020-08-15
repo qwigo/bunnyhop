@@ -1,5 +1,6 @@
 import json
 import os
+from io import BytesIO
 
 from envs import env
 
@@ -34,33 +35,7 @@ class Storage(base.BaseBunny):
         return response
 
 
-class BaseStorageBunny(base.BaseBunny):
-    storage_endpoint_url = env('BUNNYCDN_STORAGE_API_ENDPOINT', 'storage.bunnycdn.com')
-
-    def get_storage_header(self):
-        return {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'AccessKey': self.api_key
-        }
-
-    def get_storage_endpoint(self, region):
-        return f"https://{region}.{self.storage_endpoint_url}"
-
-    def get_region(self):
-        return self.Region.lower()
-
-    def call_storage_api(self, api_url, api_method, header=None, params={}, data={}, json_data={}, files={},
-                         endpoint_url=None):
-        if not header:
-            header = self.get_storage_header()
-        if not endpoint_url:
-            endpoint_url = self.get_storage_endpoint(self.get_region())
-        return self.call_api(api_url, api_method, header=header, params={}, data=params, json_data=json_data,
-                             endpoint_url=endpoint_url, files=files)
-
-
-class StorageZone(BaseStorageBunny):
+class StorageZone(base.BaseStorageBunny):
     Id = base.IntegerProperty()
     UserId = base.CharProperty()
     Name = base.CharProperty()
@@ -88,6 +63,9 @@ class StorageZone(BaseStorageBunny):
     def get(self, file_path):
         return self.call_storage_api(f"/{self.Name}/{file_path}", "GET")
 
+    def head_file(self, file_path):
+        return self.call_storage_api(f"/{self.Name}/{file_path}", "HEAD")
+
     def upload_file(self, dest_path, file_name, local_path):
         return self.call_storage_api(f"/{self.Name}/{dest_path}/{file_name}", "PUT",
                                      files={'file': open(local_path, 'rb')})
@@ -95,11 +73,13 @@ class StorageZone(BaseStorageBunny):
     def create_file(self, file_name, content):
         pass
 
-    def create_json(self, key, content):
-        pass
+    def create_json(self, key, data_dict):
+        f = BytesIO(json.dumps(data_dict).encode())
+        return self.call_storage_api(f"/{self.Name}/{key}", "PUT",
+                                     files={'file': f})
 
 
-class StorageObject(BaseStorageBunny):
+class StorageObject(base.BaseStorageBunny):
     endpoint_url = env('BUNNYCDN_STORAGE_API_ENDPOINT', 'https://storage.bunnycdn.com')
 
     Guid = base.SlugProperty(required=True)

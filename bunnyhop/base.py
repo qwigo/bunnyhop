@@ -52,3 +52,28 @@ class BaseBunny(Schema):
         except JSONDecodeError:
             return r.content
 
+
+class BaseStorageBunny(BaseBunny):
+    storage_endpoint_url = env('BUNNYCDN_STORAGE_API_ENDPOINT', 'storage.bunnycdn.com')
+
+    def get_storage_header(self):
+        return {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'AccessKey': self.api_key
+        }
+
+    def get_storage_endpoint(self, region):
+        return f"https://{region}.{self.storage_endpoint_url}"
+
+    def get_region(self):
+        return self.Region.lower()
+
+    def call_storage_api(self, api_url, api_method, header=None, params={}, data={}, json_data={}, files={},
+                         endpoint_url=None):
+        if not header:
+            header = self.get_storage_header()
+        if not endpoint_url:
+            endpoint_url = self.get_storage_endpoint(self.get_region())
+        return self.call_api(api_url, api_method, header=header, params={}, data=params, json_data=json_data,
+                             endpoint_url=endpoint_url, files=files)
