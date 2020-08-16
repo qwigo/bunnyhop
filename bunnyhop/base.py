@@ -41,12 +41,12 @@ class BaseBunny(Schema):
             url = f"{self.endpoint_url}{api_url}"
         return url
 
-    def call_api(self, api_url, api_method, header=None, params={}, data={}, json_data={}, files={}, endpoint_url=None):
+    def call_api(self, api_url, api_method, header=None, params={}, data={}, json_data={}, endpoint_url=None):
         if not header:
             header = self.get_header()
         r = requests.request(
                 method=api_method, url=self.get_url(api_url, endpoint_url), headers=header, params=params, data=data,
-                json=json_data, files=files)
+                json=json_data)
         try:
             return r.json()
         except JSONDecodeError:
@@ -69,11 +69,13 @@ class BaseStorageBunny(BaseBunny):
     def get_region(self):
         return self.Region.lower()
 
-    def call_storage_api(self, api_url, api_method, header=None, params={}, data={}, json_data={}, files={},
+    def call_storage_api(self, api_url, api_method, header=None, params={}, data={}, json_data={}, files=None,
                          endpoint_url=None):
         if not header:
             header = self.get_storage_header()
         if not endpoint_url:
             endpoint_url = self.get_storage_endpoint(self.get_region())
+        if files:
+            return requests.put(self.get_url(api_url, endpoint_url), headers=header, files=files)
         return self.call_api(api_url, api_method, header=header, params={}, data=params, json_data=json_data,
-                             endpoint_url=endpoint_url, files=files)
+                             endpoint_url=endpoint_url)
