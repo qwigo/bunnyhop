@@ -1,14 +1,18 @@
 import argparse
 import unittest
-import json
-from unittest.mock import patch, mock_open
+from envs import env
 from bunnyhop import Bunny
+
+BUNNYCDN_API_KEY = env('BUNNYCDN_API_KEY')
+BUNNYCDN_TEST_STORAGE_ZONE = env('BUNNYCDN_TEST_STORAGE_ZONE')
+BUNNYCDN_TEST_STORAGE_ZONE_NAME = env('BUNNYCDN_TEST_STORAGE_ZONE_NAME')
+BUNNYCDN_TEST_PULL_ZONE = env('BUNNYCDN_TEST_PULL_ZONE')
 
 
 class TestBilling(unittest.TestCase):
     @classmethod
     def setUpClass(self):
-        self.b = Bunny(args.api_key)
+        self.b = Bunny(BUNNYCDN_API_KEY)
 
     @classmethod
     def tearDownClass(self):
@@ -28,7 +32,7 @@ class TestStats(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        self.b = Bunny(args.api_key)
+        self.b = Bunny(BUNNYCDN_API_KEY)
 
     @classmethod
     def tearDownClass(self):
@@ -44,7 +48,7 @@ class TestPurge(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        self.b = Bunny(args.api_key)
+        self.b = Bunny(BUNNYCDN_API_KEY)
 
     @classmethod
     def tearDownClass(self):
@@ -59,15 +63,15 @@ class TestStorageZone(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        self.b = Bunny(args.api_key)
+        self.b = Bunny(BUNNYCDN_API_KEY)
 
     @classmethod
     def tearDownClass(self):
         self.b = None
 
     def test_get(self):
-        response = self.b.Storage.get("string")
-        self.assertIsNone(response)
+        response = self.b.Storage.get(BUNNYCDN_TEST_STORAGE_ZONE)
+        self.assertEqual(BUNNYCDN_TEST_STORAGE_ZONE_NAME, response.Name)
 
     def test_delete(self):
         response = self.b.Storage.delete(1111)
@@ -86,7 +90,7 @@ class TestZone(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        self.b = Bunny(args.api_key)
+        self.b = Bunny(BUNNYCDN_API_KEY)
 
     @classmethod
     def tearDownClass(self):

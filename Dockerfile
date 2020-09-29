@@ -1,3 +1,3 @@
 FROM capless/capless-docker:2
-COPY . /code
+ADD . /code
 RUN poetry install

@@ -11,7 +11,7 @@ services:
     ports:
       - 8017:8888
     volumes:
-      - ./bunnyhop/:/code/bunnyhop
+      - ./:/code/
     env_file: .env
     working_dir: /code/
     command: /root/.cache/pypoetry/virtualenvs/bunnyhop-MATOk_fk-py3.7/bin/jupyter notebook --port=8888 --ip=0.0.0.0 --allow-root
