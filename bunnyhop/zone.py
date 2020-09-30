@@ -5,100 +5,96 @@ class Zone(base.BaseBunny):
     Id = base.IntegerProperty()
     Name = base.CharProperty()
     OriginUrl = base.CharProperty()
-    Enabled = base.BooleanProperty()
+    Enabled = base.BooleanProperty(default_value=False)
     Hostnames = base.ListProperty()
     StorageZoneId = base.IntegerProperty()
     AllowedReferrers = base.ListProperty()
     BlockedReferrers = base.ListProperty()
     BlockedIps = base.ListProperty()
-    EnableGeoZoneUS = base.BooleanProperty()
-    EnableGeoZoneEU = base.BooleanProperty()
-    EnableGeoZoneASIA = base.BooleanProperty()
-    EnableGeoZoneSA = base.BooleanProperty()
-    EnableGeoZoneAF = base.BooleanProperty()
-    ZoneSecurityEnabled = base.BooleanProperty()
+    EnableGeoZoneUS = base.BooleanProperty(default_value=False)
+    EnableGeoZoneEU = base.BooleanProperty(default_value=False)
+    EnableGeoZoneASIA = base.BooleanProperty(default_value=False)
+    EnableGeoZoneSA = base.BooleanProperty(default_value=False)
+    EnableGeoZoneAF = base.BooleanProperty(default_value=False)
+    ZoneSecurityEnabled = base.BooleanProperty(default_value=False)
     ZoneSecurityKey = base.CharProperty()
-    ZoneSecurityIncludeHashRemoteIP = base.BooleanProperty()
-    IgnoreQueryStrings = base.BooleanProperty()
-    
-    # {'Id': 158540,
-    #  'Name': 'dnsly',
-    #  'OriginUrl': 'http://dnsly.net',
-    #  'Enabled': True,
-    #  'Hostnames': [{'Id': 284382,
-    #                 'Value': 'dnsly.b-cdn.net',
-    #                 'ForceSSL': False,
-    #                 'IsSystemHostname': True,
-    #                 'HasCertificate': True}],
-    #  'StorageZoneId': 0,
-    #  'AllowedReferrers': [],
-    #  'BlockedReferrers': [],
-    #  'BlockedIps': [],
-    #  'EnableGeoZoneUS': True,
-    #  'EnableGeoZoneEU': True,
-    #  'EnableGeoZoneASIA': True,
-    #  'EnableGeoZoneSA': True,
-    #  'EnableGeoZoneAF': True,
-    #  'ZoneSecurityEnabled': False,
-    #  'ZoneSecurityKey': 'afb60141-1654-4f9c-a9ed-40eb1678bcea',
-    #  'ZoneSecurityIncludeHashRemoteIP': False,
-    #  'IgnoreQueryStrings': False,
-    #  'MonthlyBandwidthLimit': 0,
-    #  'MonthlyBandwidthUsed': 0,
-    #  'MonthlyCharges': 0.0,
-    #  'AddHostHeader': False,
-    #  'Type': 1,
-    #  'CustomNginxConfig': '',
-    #  'AccessControlOriginHeaderExtensions': ['eot', 'ttf', 'woff', 'woff2', 'css'],
-    #  'EnableAccessControlOriginHeader': True,
-    #  'DisableCookies': True,
-    #  'BudgetRedirectedCountries': [],
-    #  'BlockedCountries': [],
-    #  'EnableOriginShield': True,
-    #  'CacheControlMaxAgeOverride': -1,
-    #  'CacheControlPublicMaxAgeOverride': -1,
-    #  'BurstSize': 0,
-    #  'RequestLimit': 0,
-    #  'BlockRootPathAccess': False,
-    #  'BlockPostRequests': False,
-    #  'CacheQuality': 75,
-    #  'LimitRatePerSecond': 0.0,
-    #  'LimitRateAfter': 0.0,
-    #  'ConnectionLimitPerIPCount': 0,
-    #  'PriceOverride': 0.0,
-    #  'AddCanonicalHeader': False,
-    #  'EnableLogging': True,
-    #  'IgnoreVaryHeader': True,
-    #  'EnableCacheSlice': True,
-    #  'EdgeRules': [],
-    #  'EnableWebPVary': False,
-    #  'EnableCountryCodeVary': False,
-    #  'EnableMobileVary': False,
-    #  'EnableHostnameVary': False,
-    #  'CnameDomain': 'b-cdn.net',
-    #  'AWSSigningEnabled': False,
-    #  'AWSSigningKey': None,
-    #  'AWSSigningSecret': None,
-    #  'AWSSigningRegionName': None,
-    #  'LoggingIPAnonymizationEnabled': False,
-    #  'EnableTLS1': True,
-    #  'EnableTLS1_1': True,
-    #  'VerifyOriginSSL': False,
-    #  'OriginShieldZoneCode': 'IL'}
-    def get(self, id):
-        return self.call_api(f"/pullzone/{id}", "GET", self.get_header())
+    ZoneSecurityIncludeHashRemoteIP = base.BooleanProperty(default_value=False)
+    IgnoreQueryStrings = base.BooleanProperty(default_value=False)
+    MonthlyBandwidthLimit = base.IntegerProperty()
+    MonthlyBandwidthUsed = base.IntegerProperty()
+    MonthlyCharges = base.FloatProperty()
+    AddHostHeader = base.BooleanProperty(default_value=False)
+    Type = base.IntegerProperty()
+    CustomNginxConfig = base.CharProperty()
+    AccessControlOriginHeaderExtensions = base.ListProperty()
+    EnableAccessControlOriginHeader = base.BooleanProperty(default_value=False)
+    DisableCookies = base.BooleanProperty(default_value=False)
+    BudgetRedirectedCountries = base.ListProperty()
+    BlockedCountries = base.ListProperty()
+    EnableOriginShield = base.BooleanProperty(default_value=False)
+    CacheControlMaxAgeOverride = base.IntegerProperty()
+    CacheControlPublicMaxAgeOverride = base.IntegerProperty()
+    BurstSize = base.IntegerProperty()
+    RequestLimit = base.IntegerProperty()
+    BlockRootPathAccess = base.BooleanProperty(default_value=False)
+    BlockPostRequests = base.BooleanProperty(default_value=False)
+    CacheQuality = base.IntegerProperty()
+    LimitRatePerSecond = base.FloatProperty()
+    LimitRateAfter = base.FloatProperty()
+    ConnectionLimitPerIPCount = base.IntegerProperty()
+    PriceOverride = base.FloatProperty()
+    AddCanonicalHeader = base.BooleanProperty(default_value=False)
+    EnableLogging = base.BooleanProperty(default_value=False)
+    IgnoreVaryHeader = base.BooleanProperty(default_value=False)
+    EnableCacheSlice = base.BooleanProperty(default_value=False)
+    EdgeRules = base.ListProperty()
+    EnableWebPVary = base.BooleanProperty(default_value=False)
+    EnableCountryCodeVary = base.BooleanProperty(default_value=False)
+    EnableMobileVary = base.BooleanProperty(default_value=False)
+    EnableHostnameVary = base.BooleanProperty(default_value=False)
+    CnameDomain = base.CharProperty()
+    AWSSigningEnabled = base.BooleanProperty(default_value=False)
+    AWSSigningKey = base.CharProperty()
+    AWSSigningSecret = base.CharProperty()
+    AWSSigningRegionName = base.CharProperty()
+    LoggingIPAnonymizationEnabled = base.BooleanProperty(default_value=False)
+    EnableTLS1 = base.BooleanProperty(default_value=False)
+    EnableTLS1_1 = base.BooleanProperty(default_value=False)
+    VerifyOriginSSL = base.BooleanProperty(default_value=False)
+    OriginShieldZoneCode = base.CharProperty()
 
-    def create(self, Name=None, OriginUrl=None, StorageZoneId=None, Type=None):
+    def __str__(self):
+        return self.Name
+
+    @property
+    def host_names(self):
+        return [Hostname(self.api_key, **i) for i in self.Hostnames]
+
+    def get(self, id):
+        response = self.call_api(f"/pullzone/{id}", "GET")
+        try:
+            if response.get('Id', None):
+                return Zone(self.api_key, **response)
+        except:
+            return "Zone not found."
+
+    def create(self, Name, Type, OriginUrl, StorageZoneId=None):
         api_data = {
             'Name': Name,
             'Type': Type,
             'OriginUrl': OriginUrl,
             'StorageZoneId': StorageZoneId
         }
-        return self.call_api(f"/pullzone", "POST", self.get_header(), api_data)
+        response = self.call_api(f"/pullzone", "POST", self.get_header(),
+                                 json_data=api_data)
+
+        if response.get('Id', None):
+            return Zone(self.api_key, **response)
+        return response
 
     def list(self):
-        return self.call_api(f"/pullzone", "GET", self.get_header())
+        return [Zone(self.api_key, **i) for i in self.call_api(f"/pullzone",
+                                                               "GET")]
 
     def update(
             self,
@@ -170,13 +166,29 @@ class Zone(base.BaseBunny):
             "EnableTLS1": EnableTLS1,
             "EnableTLS1_1": EnableTLS1_1
         }
-        return self.call_api(f"/pullzone/{id}", "POST", self.get_header(), api_data)
+        return self.call_api(f"/pullzone/{id}", "POST", self.get_header(),
+                             json_data=api_data)
 
     def delete(self, id):
-        return self.call_api(f"/pullzone/{id}", "DELETE", self.get_header())
+        response = self.call_api(f"/pullzone/{id}", "DELETE",
+                                 self.get_header())
+        if type(response) is bytes:
+            return "Zone deleted."
+        return response
 
     def purge(self, id):
-        return self.call_api(f"/pullzone/{id}/purgeCache", "POST", self.get_header())
+        response = self.call_api(f"/pullzone/{id}/purgeCache", "POST",
+                                 self.get_header())
+        if type(response) is bytes:
+            return "Purge Queue was finished."
+        return response
+
+    def purge_file(self, filename):
+        url = (f"http://{self.host_names[0].Value}/{filename}")
+        response = self.call_api(f"/purge", "POST", params={'url': url})
+        if type(response) is bytes:
+            return "Purge Queue was finished."
+        return response
 
     def create_edge_rule(
             self,
@@ -199,4 +211,19 @@ class Zone(base.BaseBunny):
             "TriggerMatchingType": TriggerMatchingType,
             "Triggers": Triggers
         }
-        return self.call_api(f"/pullzone/{id}/edgerules/addOrUpdate", "POST", self.get_header(), api_data)
+        response = self.call_api(f"/pullzone/{id}/edgerules/addOrUpdate",
+                                 "POST", self.get_header(), json_data=api_data)
+        if type(response) is bytes:
+            return"Successfully Added/Updated an edge rule."
+        return response
+
+
+class Hostname(base.BaseBunny):
+    Id = base.IntegerProperty()
+    Value = base.CharProperty()
+    ForceSSL = base.BooleanProperty(default_value=False)
+    IsSystemHostname = base.BooleanProperty(default_value=False)
+    HasCertificate = base.BooleanProperty(default_value=False)
+
+    def __str__(self):
+        return f"{self.Value}"

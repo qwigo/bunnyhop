@@ -77,5 +77,5 @@ class BaseStorageBunny(BaseBunny):
             endpoint_url = self.get_storage_endpoint(self.get_region())
         if files:
             return requests.put(self.get_url(api_url, endpoint_url), headers=header, files=files)
-        return self.call_api(api_url, api_method, header=header, params={}, data=params, json_data=json_data,
+        return self.call_api(api_url, api_method, header=header, params={}, data=data, json_data=json_data,
                              endpoint_url=endpoint_url)
