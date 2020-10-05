@@ -68,7 +68,7 @@ class StorageZone(base.BaseStorageBunny):
 
     def upload_file(self, dest_path, file_name, local_path):
         return self.call_storage_api(f"/{self.Name}/{dest_path}/{file_name}", "PUT",
-                                     files={'file': open(local_path, 'rb').read()})
+                                     data=open(local_path, 'rb').read())
 
     def create_file(self, file_name, content):
         pass
@@ -76,7 +76,7 @@ class StorageZone(base.BaseStorageBunny):
     def create_json(self, key, data_dict):
         f = BytesIO(json.dumps(data_dict).encode())
         return self.call_storage_api(f"/{self.Name}/{key}", "PUT",
-                                     files={key: (key, f)})
+                                     data=f.read())
 
 
 class StorageObject(base.BaseStorageBunny):
