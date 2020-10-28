@@ -20,7 +20,7 @@ class Storage(base.BaseBunny):
         if response.get('Id', None):
             return StorageZone(response.get('Password'), **response)            
         else: 
-            raise Exception(f"Error: {response.get('ErrorKey', None)} ,Message")
+            raise Exception(f"Error: {response.get('ErrorKey', None)} Message: {response.get('Message','')}")
 
     def all(self):
         return [StorageZone(i.get('Password'), **i) for i in
