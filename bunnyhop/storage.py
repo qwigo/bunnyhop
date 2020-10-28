@@ -61,6 +61,10 @@ class StorageZone(base.BaseStorageBunny):
     def get(self, file_path):
         return self.call_storage_api(f"/{self.Name}/{file_path}", "GET")
 
+    def get_object(self, file_path):
+        file = self.call_storage_api(f"/{self.Name}/", "GET")
+        return StorageObject(self.api_key, self, **file[0]) 
+
     def head_file(self, file_path):
         return self.call_storage_api(f"/{self.Name}/{file_path}", "HEAD")
 
@@ -79,11 +83,9 @@ class StorageZone(base.BaseStorageBunny):
     def delete(self):
         return self.call_api(f"/storagezone/{self.Id}", "DELETE")
 
-    def delete(self, file_path):
+    def delete_file(self, file_path):
         return self.call_storage_api(f"/{self.Name}/{file_path}", "DELETE")
 
-    def get(self, file_path):
-        return StorageObject(self.api_key, self, **(self.call_storage_api(f"/{self.Name}/{file_path}", "GET")))
 
 
 class StorageObject(base.BaseStorageBunny):
