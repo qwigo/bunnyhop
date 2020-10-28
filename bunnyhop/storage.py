@@ -18,8 +18,9 @@ class Storage(base.BaseBunny):
 
         response = self.call_api(f"/storagezone", "POST", json_data=api_data)
         if response.get('Id', None):
-            return StorageZone(response.get('Password'), **response)
-        return response
+            return StorageZone(response.get('Password'), **response)            
+        else: 
+            raise Exception(f"Error: {response.get('ErrorKey', None)} ,Message")
 
     def all(self):
         return [StorageZone(i.get('Password'), **i) for i in
@@ -52,9 +53,6 @@ class StorageZone(base.BaseStorageBunny):
     def __str__(self):
         return self.Name
 
-    def delete(self):
-        return self.call_api(f"/storagezone/{self.Id}", "DELETE")
-
     def all(self, folder=''):
         if not folder.endswith('/'):
             folder = f"{folder}/"
@@ -77,6 +75,15 @@ class StorageZone(base.BaseStorageBunny):
         f = BytesIO(json.dumps(data_dict).encode())
         return self.call_storage_api(f"/{self.Name}/{key}", "PUT",
                                      data=f.read())
+
+    def delete(self):
+        return self.call_api(f"/storagezone/{self.Id}", "DELETE")
+
+    def delete(self, file_path):
+        return self.call_storage_api(f"/{self.Name}/{file_path}", "DELETE")
+
+    def get(self, file_path):
+        return StorageObject(self.api_key, self, **(self.call_storage_api(f"/{self.Name}/{file_path}", "GET")))
 
 
 class StorageObject(base.BaseStorageBunny):
