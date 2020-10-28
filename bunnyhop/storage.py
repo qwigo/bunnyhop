@@ -65,10 +65,10 @@ class StorageZone(base.BaseStorageBunny):
         return response
 
     def get_object(self, file_path):
-        response = self.call_storage_api(f"/{self.Name}/", "GET")
+        response = self.call_storage_api(f"/{self.Name}/{file_path}", "GET")
         if isinstance(response,dict) and response.get('HttpCode',0) == 404:
             raise Exception(f"Error:{response.get('Message','')}")
-        return StorageObject(self.api_key, self, **response[0]) 
+        return [StorageObject(self.api_key, self, **i) for i in self.call_storage_api(f"/{self.Name}/", "GET") if file_path==i.get('ObjectName','') ][0]
 
     def head_file(self, file_path):
         return self.call_storage_api(f"/{self.Name}/{file_path}", "HEAD")
