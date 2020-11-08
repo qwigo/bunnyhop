@@ -11,12 +11,12 @@ BUNNYCDN_TEST_PULL_ZONE = env('BUNNYCDN_TEST_PULL_ZONE')
 
 class TestBilling(unittest.TestCase):
     @classmethod
-    def setUpClass(self):
-        self.b = Bunny(BUNNYCDN_API_KEY)
+    def setUpClass(cls):
+        cls.b = Bunny(BUNNYCDN_API_KEY)
 
     @classmethod
-    def tearDownClass(self):
-        self.b = None
+    def tearDownClass(cls):
+        cls.b = None
 
     def test_get(self):
         from bunnyhop.billing import BillingSummary
@@ -31,12 +31,12 @@ class TestBilling(unittest.TestCase):
 class TestStats(unittest.TestCase):
 
     @classmethod
-    def setUpClass(self):
-        self.b = Bunny(BUNNYCDN_API_KEY)
+    def setUpClass(cls):
+        cls.b = Bunny(BUNNYCDN_API_KEY)
 
     @classmethod
-    def tearDownClass(self):
-        self.b = None
+    def tearDownClass(cls):
+        cls.b = None
 
     def test_get(self):
         from bunnyhop.stats import Stats
@@ -47,12 +47,12 @@ class TestStats(unittest.TestCase):
 class TestPurge(unittest.TestCase):
 
     @classmethod
-    def setUpClass(self):
-        self.b = Bunny(BUNNYCDN_API_KEY)
+    def setUpClass(cls):
+        cls.b = Bunny(BUNNYCDN_API_KEY)
 
     @classmethod
-    def tearDownClass(self):
-        self.b = None
+    def tearDownClass(cls):
+        cls.b = None
 
     def test_create(self):
         response = self.b.Purge.create("http://non-existentmyzone.b-cdn.net/")
@@ -62,12 +62,12 @@ class TestPurge(unittest.TestCase):
 class TestStorageZone(unittest.TestCase):
 
     @classmethod
-    def setUpClass(self):
-        self.b = Bunny(BUNNYCDN_API_KEY)
+    def setUpClass(cls):
+        cls.b = Bunny(BUNNYCDN_API_KEY)
 
     @classmethod
-    def tearDownClass(self):
-        self.b = None
+    def tearDownClass(cls):
+        cls.b = None
 
     def test_get(self):
         response = self.b.Storage.get(BUNNYCDN_TEST_STORAGE_ZONE)
@@ -89,12 +89,12 @@ class TestStorageZone(unittest.TestCase):
 class TestZone(unittest.TestCase):
 
     @classmethod
-    def setUpClass(self):
-        self.b = Bunny(BUNNYCDN_API_KEY)
+    def setUpClass(cls):
+        cls.b = Bunny(BUNNYCDN_API_KEY)
 
     @classmethod
-    def tearDownClass(self):
-        self.b = None
+    def tearDownClass(cls):
+        cls.b = None
 
     def test_get(self):
         response = self.b.Zone.get("")
