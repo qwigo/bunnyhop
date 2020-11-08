@@ -190,6 +190,17 @@ class Zone(base.BaseBunny):
             return "Purge Queue was finished."
         return response
 
+    def add_hostname(self, hostname):
+        response = self.call_api(f"/pullzone/addHostname", "POST", self.get_header(),
+                                 json_data={'PullZoneId': self.Id, 'Hostname': hostname})
+        return response
+
+    def delete_hostname(self, hostname):
+        response = self.call_api(f"/pullzone/deleteHostname", "POST", self.get_header(),
+                                 json_data={'PullZoneId': self.Id, 'Hostname': hostname})
+        return response
+
+
     def create_edge_rule(
             self,
             id,
