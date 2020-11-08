@@ -4,7 +4,19 @@ version = "0.1.0"
 description = "A Python library created make building with BunnyCDN easier"
 authors = ["Brian Jinwright"]
 license = "Apache-2.0"
-
+readme = "README.md"
+homepage = "https://github.com/capless/bunnyhop"
+repository = "https://github.com/capless/bunnyhop"
+exclude = ".env"
+keywords = "bunnycdn json db"
+classifiers = [
+    "Python",
+    "Python :: 3.6", 
+    "Python :: 3.7", 
+    "Python :: 3.8",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Internet :: WWW/HTTP :: Site Management"    
+]
 [tool.poetry.dependencies]
 python = "^3.7"
 valley = "^1.5.5"
