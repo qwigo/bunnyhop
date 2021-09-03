@@ -7,8 +7,7 @@ license = "Apache-2.0"
 readme = "README.md"
 homepage = "https://github.com/capless/bunnyhop"
 repository = "https://github.com/capless/bunnyhop"
-exclude = ".env"
-keywords = "bunnycdn json db"
+exclude = [".env"]
 classifiers = [
     "Python",
     "Python :: 3.6", 
