@@ -1,4 +1,5 @@
 import argparse
+import sys
 import unittest
 from envs import env
 from bunnyhop import Bunny
@@ -123,7 +124,6 @@ def parse_args():
 
 
 if __name__ == '__main__':
-    import sys
     args, argv = parse_args()
     sys.argv[:] = argv
     unittest.main()

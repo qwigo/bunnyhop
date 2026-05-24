@@ -3,10 +3,23 @@ from json import JSONDecodeError
 import requests
 
 from envs import env
-from valley.contrib import Schema
+try:
+    from valley.contrib import Schema
+except ImportError:
+    from valley import Schema
 # Imports for other modules
-from valley.properties import FloatProperty, CharProperty, ListProperty, IntegerProperty, EmailProperty, \
+from valley.properties import FloatProperty, ListProperty, IntegerProperty, EmailProperty, \
     DateTimeProperty, BooleanProperty, SlugProperty, DictProperty
+try:
+    from valley.properties import CharProperty
+except ImportError:
+    from valley.properties import StringProperty as CharProperty
+
+
+class BunnyAPIError(Exception):
+    def __init__(self, status_code, message=""):
+        self.status_code = status_code
+        super().__init__(f"Bunny.net API error {status_code}: {message}")
 
 
 class BaseBunny(Schema):
@@ -41,12 +54,20 @@ class BaseBunny(Schema):
             url = f"{self.endpoint_url}{api_url}"
         return url
 
-    def call_api(self, api_url, api_method, header=None, params={}, data={}, json_data={}, endpoint_url=None):
+    def call_api(self, api_url, api_method, header=None, params=None, data=None, json_data=None, endpoint_url=None):
+        if params is None:
+            params = {}
+        if data is None:
+            data = {}
+        if json_data is None:
+            json_data = {}
         if not header:
             header = self.get_header()
         r = requests.request(
                 method=api_method, url=self.get_url(api_url, endpoint_url), headers=header, params=params, data=data,
                 json=json_data)
+        if r.status_code >= 500:
+            raise BunnyAPIError(r.status_code, r.text)
         try:
             return r.json()
         except JSONDecodeError:
@@ -69,13 +90,19 @@ class BaseStorageBunny(BaseBunny):
     def get_region(self):
         return self.Region.lower()
 
-    def call_storage_api(self, api_url, api_method, header=None, params={}, data={}, json_data={}, files=None,
+    def call_storage_api(self, api_url, api_method, header=None, params=None, data=None, json_data=None, files=None,
                          endpoint_url=None):
+        if params is None:
+            params = {}
+        if data is None:
+            data = {}
+        if json_data is None:
+            json_data = {}
         if not header:
             header = self.get_storage_header()
         if not endpoint_url:
             endpoint_url = self.get_storage_endpoint(self.get_region())
         if files:
             return requests.put(self.get_url(api_url, endpoint_url), headers=header, files=files)
-        return self.call_api(api_url, api_method, header=header, params={}, data=data, json_data=json_data,
+        return self.call_api(api_url, api_method, header=header, params=params, data=data, json_data=json_data,
                              endpoint_url=endpoint_url)
