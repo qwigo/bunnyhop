@@ -54,7 +54,7 @@ class Test_GettingStarted(unittest.TestCase):
         # Assert
         testzone = self.b.Zone.get(id=testId)
         self.assertEqual(testzone.Name, name)
-        self.assertEqual(testzone.Type, type)
+        self.assertEqual(testzone.Type, testType)
         self.assertEqual(testzone.OriginUrl, originUrl)
         self.assertEqual(testzone.StorageZoneId, storageZoneId)
         testzone.delete()
