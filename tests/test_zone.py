@@ -14,9 +14,10 @@ from bunnyhop.zone import Zone
 API_KEY = "test-api-key"
 
 
-def make_mock_response(json_data=None, content=b""):
+def make_mock_response(json_data=None, content=b"", status_code=200):
     """Return a mock requests.Response-like object."""
     mock_resp = MagicMock()
+    mock_resp.status_code = status_code
     if json_data is not None:
         mock_resp.json.return_value = json_data
     else:

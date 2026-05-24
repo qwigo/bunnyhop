@@ -45,8 +45,9 @@ BILLING_SUMMARY_RESPONSE = {
 APPLY_CODE_RESPONSE = {"ErrorKey": "code.invalid"}
 
 
-def _make_mock_response(json_data):
+def _make_mock_response(json_data, status_code=200):
     mock_resp = MagicMock()
+    mock_resp.status_code = status_code
     mock_resp.json.return_value = json_data
     return mock_resp
 

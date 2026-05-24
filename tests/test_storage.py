@@ -63,9 +63,10 @@ def _make_storage():
     return Storage('test-api-key')
 
 
-def _mock_response(json_data=None, content=b''):
+def _mock_response(json_data=None, content=b'', status_code=200):
     """Build a mock requests.Response-like object."""
     mock_resp = MagicMock()
+    mock_resp.status_code = status_code
     if json_data is not None:
         mock_resp.json.return_value = json_data
         mock_resp.content = json.dumps(json_data).encode()
