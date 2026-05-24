@@ -18,9 +18,12 @@ class Storage(base.BaseBunny):
 
         response = self.call_api(f"/storagezone", "POST", json_data=api_data)
         if response.get('Id', None):
-            return StorageZone(response.get('Password'), **response)            
-        else: 
-            raise Exception(f"Error: {response.get('ErrorKey', None)} Message: {response.get('Message','')}")
+            return StorageZone(response.get('Password'), **response)
+        else:
+            raise ValueError(f"Storage zone creation failed [{response.get('ErrorKey')}]: {response.get('Message', '')}")
+
+    def update(self, id, **kwargs):
+        return self.call_api(f"/storagezone/{id}", "POST", json_data=kwargs)
 
     def all(self):
         return [StorageZone(i.get('Password'), **i) for i in
@@ -65,20 +68,26 @@ class StorageZone(base.BaseStorageBunny):
         return response
 
     def get_object(self, file_path):
-        response = self.call_storage_api(f"/{self.Name}/{file_path}", "GET")
-        if isinstance(response,dict) and response.get('HttpCode',0) == 404:
-            raise Exception(f"Error:{response.get('Message','')}")
-        return [StorageObject(self.api_key, self, **i) for i in self.call_storage_api(f"/{self.Name}/", "GET") if file_path==i.get('ObjectName','') ][0]
+        items = self.call_storage_api(f"/{self.Name}/", "GET")
+        if not isinstance(items, list):
+            raise FileNotFoundError(f"Could not list storage zone '{self.Name}'")
+        matches = [StorageObject(self.api_key, self, **i) for i in items if file_path == i.get('ObjectName', '')]
+        if not matches:
+            raise FileNotFoundError(f"'{file_path}' not found in storage zone '{self.Name}'")
+        return matches[0]
 
     def head_file(self, file_path):
         return self.call_storage_api(f"/{self.Name}/{file_path}", "HEAD")
 
     def upload_file(self, dest_path, file_name, local_path):
-        return self.call_storage_api(f"/{self.Name}/{dest_path}/{file_name}", "PUT",
-                                     data=open(local_path, 'rb').read())
+        with open(local_path, 'rb') as f:
+            data = f.read()
+        return self.call_storage_api(f"/{self.Name}/{dest_path}/{file_name}", "PUT", data=data)
 
     def create_file(self, file_name, content):
-        pass
+        if isinstance(content, str):
+            content = content.encode('utf-8')
+        return self.call_storage_api(f"/{self.Name}/{file_name}", "PUT", data=content)
 
     def create_json(self, key, data_dict):
         f = BytesIO(json.dumps(data_dict).encode())
@@ -90,8 +99,8 @@ class StorageZone(base.BaseStorageBunny):
 
     def delete_file(self, file_path):
         response = self.call_storage_api(f"/{self.Name}/{file_path}", "DELETE")
-        if response.get('HttpCode',0) == 404:
-            raise Exception(f"Error:{response.get('Message','')}")
+        if isinstance(response, dict) and response.get('HttpCode', 0) == 404:
+            raise FileNotFoundError(f"Error: {response.get('Message', '')}")
         return response
 
 
