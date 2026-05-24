@@ -30,4 +30,4 @@ class Stats(base.BaseBunny):
             'serverZoneId': server_zone_id
         }
         return Stats(self.api_key, **self.call_api(
-            f"/statistics?dateFrom", "GET", params=params))
+            "/statistics", "GET", params=params))
