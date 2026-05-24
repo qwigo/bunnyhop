@@ -1,10 +1,10 @@
 import unittest
+from envs import env
 from bunnyhop import Bunny
 
 class Test_GettingStarted(unittest.TestCase):
     def setUp(self):
-        briansApiKey= '***REMOVED***'
-        b = Bunny(briansApiKey)
+        b = Bunny(env('BUNNYCDN_API_KEY'))
         self.b = b
 
     def tearDown(self):
