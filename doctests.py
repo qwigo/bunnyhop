@@ -1,10 +1,10 @@
 import unittest
+from envs import env
 from bunnyhop import Bunny
 
 class Test_GettingStarted(unittest.TestCase):
     def setUp(self):
-        briansApiKey= '***REMOVED***'
-        b = Bunny(briansApiKey)
+        b = Bunny(env('BUNNYCDN_API_KEY'))
         self.b = b
 
     def tearDown(self):
@@ -54,7 +54,7 @@ class Test_GettingStarted(unittest.TestCase):
         # Assert
         testzone = self.b.Zone.get(id=testId)
         self.assertEqual(testzone.Name, name)
-        self.assertEqual(testzone.Type, type)
+        self.assertEqual(testzone.Type, testType)
         self.assertEqual(testzone.OriginUrl, originUrl)
         self.assertEqual(testzone.StorageZoneId, storageZoneId)
         testzone.delete()

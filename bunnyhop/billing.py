@@ -7,7 +7,7 @@ class Billing(base.BaseBunny):
         return BillingSummary(self.api_key, **self.call_api(f"/billing", "GET"))
 
     def apply_code(self, coupon_code):
-        return self.call_api(f"/billing/applycode?couponCode={coupon_code}", "GET")
+        return self.call_api("/billing/applycode", "GET", params={"couponCode": coupon_code})
 
 
 class BillingRecord(base.BaseBunny):

@@ -68,14 +68,14 @@ class Zone(base.BaseBunny):
 
     @property
     def host_names(self):
-        return [Hostname(self.api_key, **i) for i in self.Hostnames]
+        return [Hostname(self.api_key, **i) for i in (self.Hostnames or [])]
 
     def get(self, id):
         response = self.call_api(f"/pullzone/{id}", "GET")
         try:
             if response.get('Id', None):
                 return Zone(self.api_key, **response)
-        except:
+        except (AttributeError, TypeError, KeyError):
             return "Zone not found."
 
     def create(self, Name, Type, OriginUrl, StorageZoneId=None):
@@ -166,6 +166,7 @@ class Zone(base.BaseBunny):
             "EnableTLS1": EnableTLS1,
             "EnableTLS1_1": EnableTLS1_1
         }
+        api_data = {k: v for k, v in api_data.items() if v is not None}
         return self.call_api(f"/pullzone/{id}", "POST", self.get_header(),
                              json_data=api_data)
 
@@ -184,26 +185,69 @@ class Zone(base.BaseBunny):
         return response
 
     def purge_file(self, filename):
+        if not self.host_names:
+            raise ValueError("Zone has no hostnames configured.")
         url = (f"http://{self.host_names[0].Value}/{filename}")
-        response = self.call_api(f"/purge", "POST", params={'url': url})
+        response = self.call_api("/purge", "GET", params={'url': url})
         if type(response) is bytes:
             return "Purge Queue was finished."
         return response
 
     def add_hostname(self, hostname):
-        response = self.call_api(f"/pullzone/addHostname", "POST", self.get_header(),
-                                 json_data={'PullZoneId': self.Id, 'Hostname': hostname})
+        response = self.call_api(f"/pullzone/{self.Id}/addHostname", "POST", self.get_header(),
+                                 json_data={'Hostname': hostname})
         return response
 
     def delete_hostname(self, hostname):
-        response = self.call_api(f"/pullzone/deleteHostname", "POST", self.get_header(),
-                                 json_data={'PullZoneId': self.Id, 'Hostname': hostname})
+        response = self.call_api(f"/pullzone/{self.Id}/removeHostname", "DELETE", self.get_header(),
+                                 json_data={'Hostname': hostname})
         return response
 
+    def load_free_certificate(self, hostname):
+        response = self.call_api(
+            "/pullzone/loadFreeCertificate",
+            "GET",
+            params={"hostname": hostname}
+        )
+        if type(response) is bytes:
+            return "Free certificate loaded successfully."
+        return response
+
+    def add_certificate(self, hostname, certificate, certificate_key):
+        response = self.call_api(
+            f"/pullzone/{self.Id}/addCertificate",
+            "POST",
+            self.get_header(),
+            json_data={"Hostname": hostname, "Certificate": certificate, "CertificateKey": certificate_key}
+        )
+        if type(response) is bytes:
+            return "Certificate added successfully."
+        return response
+
+    def remove_certificate(self, hostname):
+        response = self.call_api(
+            f"/pullzone/{self.Id}/removeCertificate",
+            "DELETE",
+            self.get_header(),
+            json_data={"Hostname": hostname}
+        )
+        if type(response) is bytes:
+            return "Certificate removed successfully."
+        return response
+
+    def set_force_ssl(self, hostname, force_ssl):
+        response = self.call_api(
+            f"/pullzone/{self.Id}/setForceSSL",
+            "POST",
+            self.get_header(),
+            json_data={"Hostname": hostname, "ForceSSL": force_ssl}
+        )
+        if type(response) is bytes:
+            return "Force SSL setting updated."
+        return response
 
     def create_edge_rule(
             self,
-            id,
             Guid=None,
             ActionParameter1=None,
             ActionParameter2=None,
@@ -211,7 +255,9 @@ class Zone(base.BaseBunny):
             Description=None,
             ActionType=None,
             TriggerMatchingType=None,
-            Triggers=None):
+            Triggers=None,
+            id=None):
+        zone_id = id if id is not None else self.Id
         api_data = {
             "Guid": Guid,
             "ActionParameter1": ActionParameter1,
@@ -222,10 +268,18 @@ class Zone(base.BaseBunny):
             "TriggerMatchingType": TriggerMatchingType,
             "Triggers": Triggers
         }
-        response = self.call_api(f"/pullzone/{id}/edgerules/addOrUpdate",
+        response = self.call_api(f"/pullzone/{zone_id}/edgerules/addOrUpdate",
                                  "POST", self.get_header(), json_data=api_data)
         if type(response) is bytes:
-            return"Successfully Added/Updated an edge rule."
+            return "Successfully Added/Updated an edge rule."
+        return response
+
+    def delete_edge_rule(self, edge_rule_guid, id=None):
+        zone_id = id if id is not None else self.Id
+        response = self.call_api(f"/pullzone/{zone_id}/edgerules/{edge_rule_guid}",
+                                 "DELETE", self.get_header())
+        if type(response) is bytes:
+            return "Successfully deleted edge rule."
         return response
 
 
