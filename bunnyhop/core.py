@@ -1,5 +1,6 @@
 from bunnyhop.billing import Billing
 from bunnyhop.dns import DNS
+from bunnyhop.edge_script import EdgeScript
 from bunnyhop.purge import Purge
 from bunnyhop.stats import Stats
 from bunnyhop.storage import Storage, StorageZone
@@ -18,3 +19,4 @@ class Bunny(object):
         self.Billing = Billing(api_key)
         self.DNS = DNS(api_key)
         self.Stream = Stream(api_key)
+        self.EdgeScript = EdgeScript(api_key)
