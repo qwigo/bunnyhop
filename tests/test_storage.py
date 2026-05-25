@@ -309,5 +309,107 @@ class TestStorageUpdate(unittest.TestCase):
         self.assertTrue(callable(self.storage.update))
 
 
+STORAGE_ZONE_STATS_RESPONSE = {
+    'TotalStorageUsed': 1073741824,
+    'TotalFilesStored': 500,
+    'StorageUsedChart': {'2024-01-01': 1073741824},
+    'FilesStoredChart': {'2024-01-01': 500},
+    'StorageUsedBySizeChart': {},
+}
+
+
+# ===========================================================================
+# Issue #22 — Storage.get_stats() and StorageZone.get_stats()
+# ===========================================================================
+class TestStorageGetStats(unittest.TestCase):
+
+    def setUp(self):
+        self.storage = _make_storage()
+
+    @patch('requests.request')
+    def test_get_stats_calls_correct_endpoint(self, mock_request):
+        from bunnyhop.storage import StorageZoneStats
+        mock_request.return_value = _mock_response(json_data=STORAGE_ZONE_STATS_RESPONSE)
+        self.storage.get_stats(42)
+        call_kwargs = mock_request.call_args[1]
+        self.assertEqual(call_kwargs['method'], 'GET')
+        self.assertIn('/storagezone/42/statistics', call_kwargs['url'])
+
+    @patch('requests.request')
+    def test_get_stats_passes_date_params(self, mock_request):
+        from bunnyhop.storage import StorageZoneStats
+        mock_request.return_value = _mock_response(json_data=STORAGE_ZONE_STATS_RESPONSE)
+        self.storage.get_stats(42, date_from='2024-01-01', date_to='2024-12-31')
+        params = mock_request.call_args[1].get('params', {})
+        self.assertEqual(params.get('dateFrom'), '2024-01-01')
+        self.assertEqual(params.get('dateTo'), '2024-12-31')
+
+    @patch('requests.request')
+    def test_get_stats_returns_storage_zone_stats_instance(self, mock_request):
+        from bunnyhop.storage import StorageZoneStats
+        mock_request.return_value = _mock_response(json_data=STORAGE_ZONE_STATS_RESPONSE)
+        result = self.storage.get_stats(42)
+        self.assertIsInstance(result, StorageZoneStats)
+
+    @patch('requests.request')
+    def test_get_stats_populates_total_fields(self, mock_request):
+        from bunnyhop.storage import StorageZoneStats
+        mock_request.return_value = _mock_response(json_data=STORAGE_ZONE_STATS_RESPONSE)
+        result = self.storage.get_stats(42)
+        self.assertEqual(result.TotalStorageUsed, 1073741824)
+        self.assertEqual(result.TotalFilesStored, 500)
+
+    @patch('requests.request')
+    def test_get_stats_populates_chart_fields(self, mock_request):
+        from bunnyhop.storage import StorageZoneStats
+        mock_request.return_value = _mock_response(json_data=STORAGE_ZONE_STATS_RESPONSE)
+        result = self.storage.get_stats(42)
+        self.assertIsInstance(result.StorageUsedChart, dict)
+        self.assertIsInstance(result.FilesStoredChart, dict)
+
+    @patch('requests.request')
+    def test_get_stats_uses_get_method(self, mock_request):
+        from bunnyhop.storage import StorageZoneStats
+        mock_request.return_value = _mock_response(json_data=STORAGE_ZONE_STATS_RESPONSE)
+        self.storage.get_stats(42)
+        self.assertEqual(mock_request.call_args[1]['method'], 'GET')
+
+
+class TestStorageZoneGetStats(unittest.TestCase):
+
+    def setUp(self):
+        self.zone = _make_storage_zone()
+
+    @patch('requests.request')
+    def test_zone_get_stats_calls_correct_endpoint(self, mock_request):
+        from bunnyhop.storage import StorageZoneStats
+        mock_request.return_value = _mock_response(json_data=STORAGE_ZONE_STATS_RESPONSE)
+        self.zone.get_stats()
+        call_kwargs = mock_request.call_args[1]
+        self.assertIn('/storagezone/1/statistics', call_kwargs['url'])
+
+    @patch('requests.request')
+    def test_zone_get_stats_returns_storage_zone_stats_instance(self, mock_request):
+        from bunnyhop.storage import StorageZoneStats
+        mock_request.return_value = _mock_response(json_data=STORAGE_ZONE_STATS_RESPONSE)
+        result = self.zone.get_stats()
+        self.assertIsInstance(result, StorageZoneStats)
+
+    @patch('requests.request')
+    def test_zone_get_stats_passes_date_range(self, mock_request):
+        from bunnyhop.storage import StorageZoneStats
+        mock_request.return_value = _mock_response(json_data=STORAGE_ZONE_STATS_RESPONSE)
+        self.zone.get_stats(date_from='2024-01-01', date_to='2024-12-31')
+        params = mock_request.call_args[1].get('params', {})
+        self.assertEqual(params.get('dateFrom'), '2024-01-01')
+
+    @patch('requests.request')
+    def test_zone_get_stats_uses_get_method(self, mock_request):
+        from bunnyhop.storage import StorageZoneStats
+        mock_request.return_value = _mock_response(json_data=STORAGE_ZONE_STATS_RESPONSE)
+        self.zone.get_stats()
+        self.assertEqual(mock_request.call_args[1]['method'], 'GET')
+
+
 if __name__ == '__main__':
     unittest.main()

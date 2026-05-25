@@ -7,6 +7,17 @@ from envs import env
 from bunnyhop import base
 
 
+class StorageZoneStats(base.BaseBunny):
+    TotalStorageUsed = base.IntegerProperty()
+    TotalFilesStored = base.IntegerProperty()
+    StorageUsedChart = base.DictProperty()
+    FilesStoredChart = base.DictProperty()
+    StorageUsedBySizeChart = base.DictProperty()
+
+    def __str__(self):
+        return f"StorageUsed: {self.TotalStorageUsed} | FilesStored: {self.TotalFilesStored}"
+
+
 class Storage(base.BaseBunny):
 
     def create(self, name, main_storage_region: str = None, replica_regions: list = None):
@@ -37,6 +48,13 @@ class Storage(base.BaseBunny):
         if response.get('Id', None):
             return StorageZone(response.get('Password'), **response)
         return response
+
+    def get_stats(self, id, date_from=None, date_to=None):
+        params = {'dateFrom': date_from, 'dateTo': date_to}
+        return StorageZoneStats(
+            self.api_key,
+            **self.call_api(f"/storagezone/{id}/statistics", "GET", params=params)
+        )
 
 
 class StorageZone(base.BaseStorageBunny):
@@ -96,6 +114,13 @@ class StorageZone(base.BaseStorageBunny):
 
     def delete(self):
         return self.call_api(f"/storagezone/{self.Id}", "DELETE")
+
+    def get_stats(self, date_from=None, date_to=None):
+        params = {'dateFrom': date_from, 'dateTo': date_to}
+        return StorageZoneStats(
+            self.api_key,
+            **self.call_api(f"/storagezone/{self.Id}/statistics", "GET", params=params)
+        )
 
     def delete_file(self, file_path):
         response = self.call_storage_api(f"/{self.Name}/{file_path}", "DELETE")
