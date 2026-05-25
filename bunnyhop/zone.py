@@ -188,7 +188,7 @@ class Zone(base.BaseBunny):
         if not self.host_names:
             raise ValueError("Zone has no hostnames configured.")
         url = (f"http://{self.host_names[0].Value}/{filename}")
-        response = self.call_api(f"/purge", "POST", params={'url': url})
+        response = self.call_api("/purge", "GET", params={'url': url})
         if type(response) is bytes:
             return "Purge Queue was finished."
         return response
