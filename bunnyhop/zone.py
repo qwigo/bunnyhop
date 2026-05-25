@@ -206,7 +206,6 @@ class Zone(base.BaseBunny):
 
     def create_edge_rule(
             self,
-            id,
             Guid=None,
             ActionParameter1=None,
             ActionParameter2=None,
@@ -214,7 +213,9 @@ class Zone(base.BaseBunny):
             Description=None,
             ActionType=None,
             TriggerMatchingType=None,
-            Triggers=None):
+            Triggers=None,
+            id=None):
+        zone_id = id if id is not None else self.Id
         api_data = {
             "Guid": Guid,
             "ActionParameter1": ActionParameter1,
@@ -225,14 +226,15 @@ class Zone(base.BaseBunny):
             "TriggerMatchingType": TriggerMatchingType,
             "Triggers": Triggers
         }
-        response = self.call_api(f"/pullzone/{id}/edgerules/addOrUpdate",
+        response = self.call_api(f"/pullzone/{zone_id}/edgerules/addOrUpdate",
                                  "POST", self.get_header(), json_data=api_data)
         if type(response) is bytes:
             return "Successfully Added/Updated an edge rule."
         return response
 
-    def delete_edge_rule(self, id, edge_rule_guid):
-        response = self.call_api(f"/pullzone/{id}/edgerules/{edge_rule_guid}",
+    def delete_edge_rule(self, edge_rule_guid, id=None):
+        zone_id = id if id is not None else self.Id
+        response = self.call_api(f"/pullzone/{zone_id}/edgerules/{edge_rule_guid}",
                                  "DELETE", self.get_header())
         if type(response) is bytes:
             return "Successfully deleted edge rule."

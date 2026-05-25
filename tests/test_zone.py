@@ -216,12 +216,45 @@ class TestZoneDeleteEdgeRule(unittest.TestCase):
             return make_mock_response(content=b"")
 
         with patch("requests.request", side_effect=fake_request):
-            zone.delete_edge_rule(789, "some-guid-abc")
+            zone.delete_edge_rule("some-guid-abc", id=789)
 
         self.assertEqual(len(captured_calls), 1)
         call = captured_calls[0]
         self.assertEqual(call["method"], "DELETE")
         self.assertIn("/pullzone/789/edgerules/some-guid-abc", call["url"])
+
+    def test_delete_edge_rule_uses_self_id_when_no_id_given(self):
+        zone = Zone(API_KEY, Id=789)
+        captured_calls = []
+        def fake_request(**kwargs):
+            captured_calls.append(kwargs)
+            return make_mock_response(content=b"")
+        with patch("requests.request", side_effect=fake_request):
+            result = zone.delete_edge_rule("some-guid-abc")  # no id kwarg
+        self.assertEqual(len(captured_calls), 1)
+        call = captured_calls[0]
+        self.assertEqual(call["method"], "DELETE")
+        self.assertIn("/pullzone/789/edgerules/some-guid-abc", call["url"])
+
+    def test_delete_edge_rule_returns_string_on_success(self):
+        zone = Zone(API_KEY, Id=789)
+        with patch("requests.request") as mock_req:
+            mock_req.return_value = make_mock_response(content=b"")
+            result = zone.delete_edge_rule("some-guid-abc")
+        self.assertIsInstance(result, str)
+        self.assertIn("edge rule", result.lower())
+
+    def test_delete_edge_rule_explicit_id_overrides_self_id(self):
+        zone = Zone(API_KEY, Id=111)
+        captured_calls = []
+        def fake_request(**kwargs):
+            captured_calls.append(kwargs)
+            return make_mock_response(content=b"")
+        with patch("requests.request", side_effect=fake_request):
+            zone.delete_edge_rule("some-guid-abc", id=999)
+        call = captured_calls[0]
+        self.assertIn("/pullzone/999/edgerules/some-guid-abc", call["url"])
+        self.assertNotIn("/pullzone/111/", call["url"])
 
 
 class TestZoneCreateEdgeRule(unittest.TestCase):
@@ -235,6 +268,18 @@ class TestZoneCreateEdgeRule(unittest.TestCase):
             result = zone.create_edge_rule(id=1, Guid="guid-123", ActionType=0)
         self.assertIsInstance(result, str)
         self.assertIn("edge rule", result.lower())
+
+    def test_create_edge_rule_uses_self_id_when_no_id_given(self):
+        zone = Zone(API_KEY, Id=42)
+        captured_calls = []
+        def fake_request(**kwargs):
+            captured_calls.append(kwargs)
+            return make_mock_response(content=b"")
+        with patch("requests.request", side_effect=fake_request):
+            zone.create_edge_rule(Guid="guid-abc", ActionType=0)
+        call = captured_calls[0]
+        self.assertEqual(call["method"], "POST")
+        self.assertIn("/pullzone/42/edgerules/addOrUpdate", call["url"])
 
 
 if __name__ == "__main__":
