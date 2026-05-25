@@ -1,4 +1,5 @@
 from bunnyhop.billing import Billing
+from bunnyhop.dns import DNS
 from bunnyhop.purge import Purge
 from bunnyhop.stats import Stats
 from bunnyhop.storage import Storage, StorageZone
@@ -14,3 +15,4 @@ class Bunny(object):
         self.StorageZone = StorageZone(api_key)
         self.Stats = Stats(api_key)
         self.Billing = Billing(api_key)
+        self.DNS = DNS(api_key)
