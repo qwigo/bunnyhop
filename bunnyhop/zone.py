@@ -203,6 +203,48 @@ class Zone(base.BaseBunny):
                                  json_data={'Hostname': hostname})
         return response
 
+    def load_free_certificate(self, hostname):
+        response = self.call_api(
+            "/pullzone/loadFreeCertificate",
+            "GET",
+            params={"hostname": hostname}
+        )
+        if type(response) is bytes:
+            return "Free certificate loaded successfully."
+        return response
+
+    def add_certificate(self, hostname, certificate, certificate_key):
+        response = self.call_api(
+            f"/pullzone/{self.Id}/addCertificate",
+            "POST",
+            self.get_header(),
+            json_data={"Hostname": hostname, "Certificate": certificate, "CertificateKey": certificate_key}
+        )
+        if type(response) is bytes:
+            return "Certificate added successfully."
+        return response
+
+    def remove_certificate(self, hostname):
+        response = self.call_api(
+            f"/pullzone/{self.Id}/removeCertificate",
+            "DELETE",
+            self.get_header(),
+            json_data={"Hostname": hostname}
+        )
+        if type(response) is bytes:
+            return "Certificate removed successfully."
+        return response
+
+    def set_force_ssl(self, hostname, force_ssl):
+        response = self.call_api(
+            f"/pullzone/{self.Id}/setForceSSL",
+            "POST",
+            self.get_header(),
+            json_data={"Hostname": hostname, "ForceSSL": force_ssl}
+        )
+        if type(response) is bytes:
+            return "Force SSL setting updated."
+        return response
 
     def create_edge_rule(
             self,

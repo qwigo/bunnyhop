@@ -282,5 +282,137 @@ class TestZoneCreateEdgeRule(unittest.TestCase):
         self.assertIn("/pullzone/42/edgerules/addOrUpdate", call["url"])
 
 
+class TestZoneLoadFreeCertificate(unittest.TestCase):
+    def test_load_free_certificate_uses_get_and_correct_path(self):
+        zone = Zone(API_KEY)
+        captured = []
+        def fake_req(**kwargs): captured.append(kwargs); return make_mock_response(content=b"")
+        with patch("requests.request", side_effect=fake_req):
+            zone.load_free_certificate("cdn.example.com")
+        self.assertEqual(captured[0]["method"], "GET")
+        self.assertIn("/pullzone/loadFreeCertificate", captured[0]["url"])
+
+    def test_load_free_certificate_sends_hostname_as_query_param(self):
+        zone = Zone(API_KEY)
+        captured = []
+        def fake_req(**kwargs): captured.append(kwargs); return make_mock_response(content=b"")
+        with patch("requests.request", side_effect=fake_req):
+            zone.load_free_certificate("cdn.example.com")
+        self.assertEqual(captured[0]["params"]["hostname"], "cdn.example.com")
+
+    def test_load_free_certificate_returns_string_on_success(self):
+        zone = Zone(API_KEY)
+        with patch("requests.request") as m:
+            m.return_value = make_mock_response(content=b"")
+            result = zone.load_free_certificate("cdn.example.com")
+        self.assertIsInstance(result, str)
+
+    def test_load_free_certificate_returns_error_dict_on_failure(self):
+        zone = Zone(API_KEY)
+        err = {"ErrorKey": "validation.error", "Message": "Hostname not found"}
+        with patch("requests.request") as m:
+            m.return_value = make_mock_response(json_data=err)
+            result = zone.load_free_certificate("cdn.example.com")
+        self.assertEqual(result, err)
+
+
+class TestZoneAddCertificate(unittest.TestCase):
+    def test_add_certificate_uses_post_and_correct_path(self):
+        zone = Zone(API_KEY, Id=123)
+        captured = []
+        def fake_req(**kwargs): captured.append(kwargs); return make_mock_response(content=b"")
+        with patch("requests.request", side_effect=fake_req):
+            zone.add_certificate("cdn.example.com", "CERT", "KEY")
+        self.assertEqual(captured[0]["method"], "POST")
+        self.assertIn("/pullzone/123/addCertificate", captured[0]["url"])
+
+    def test_add_certificate_sends_correct_json_body(self):
+        zone = Zone(API_KEY, Id=123)
+        captured = []
+        def fake_req(**kwargs): captured.append(kwargs); return make_mock_response(content=b"")
+        with patch("requests.request", side_effect=fake_req):
+            zone.add_certificate("cdn.example.com", "CERT_DATA", "KEY_DATA")
+        self.assertEqual(captured[0]["json"]["Hostname"], "cdn.example.com")
+        self.assertEqual(captured[0]["json"]["Certificate"], "CERT_DATA")
+        self.assertEqual(captured[0]["json"]["CertificateKey"], "KEY_DATA")
+
+    def test_add_certificate_returns_string_on_success(self):
+        zone = Zone(API_KEY, Id=123)
+        with patch("requests.request") as m:
+            m.return_value = make_mock_response(content=b"")
+            result = zone.add_certificate("cdn.example.com", "CERT", "KEY")
+        self.assertIsInstance(result, str)
+
+    def test_add_certificate_returns_error_dict_on_failure(self):
+        zone = Zone(API_KEY, Id=123)
+        err = {"ErrorKey": "error", "Message": "Invalid cert"}
+        with patch("requests.request") as m:
+            m.return_value = make_mock_response(json_data=err)
+            result = zone.add_certificate("cdn.example.com", "CERT", "KEY")
+        self.assertEqual(result, err)
+
+
+class TestZoneRemoveCertificate(unittest.TestCase):
+    def test_remove_certificate_uses_delete_and_correct_path(self):
+        zone = Zone(API_KEY, Id=456)
+        captured = []
+        def fake_req(**kwargs): captured.append(kwargs); return make_mock_response(content=b"")
+        with patch("requests.request", side_effect=fake_req):
+            zone.remove_certificate("cdn.example.com")
+        self.assertEqual(captured[0]["method"], "DELETE")
+        self.assertIn("/pullzone/456/removeCertificate", captured[0]["url"])
+
+    def test_remove_certificate_sends_hostname_in_body(self):
+        zone = Zone(API_KEY, Id=456)
+        captured = []
+        def fake_req(**kwargs): captured.append(kwargs); return make_mock_response(content=b"")
+        with patch("requests.request", side_effect=fake_req):
+            zone.remove_certificate("cdn.example.com")
+        self.assertEqual(captured[0]["json"]["Hostname"], "cdn.example.com")
+
+    def test_remove_certificate_returns_string_on_success(self):
+        zone = Zone(API_KEY, Id=456)
+        with patch("requests.request") as m:
+            m.return_value = make_mock_response(content=b"")
+            result = zone.remove_certificate("cdn.example.com")
+        self.assertIsInstance(result, str)
+
+
+class TestZoneSetForceSSL(unittest.TestCase):
+    def test_set_force_ssl_uses_post_and_correct_path(self):
+        zone = Zone(API_KEY, Id=789)
+        captured = []
+        def fake_req(**kwargs): captured.append(kwargs); return make_mock_response(content=b"")
+        with patch("requests.request", side_effect=fake_req):
+            zone.set_force_ssl("cdn.example.com", True)
+        self.assertEqual(captured[0]["method"], "POST")
+        self.assertIn("/pullzone/789/setForceSSL", captured[0]["url"])
+
+    def test_set_force_ssl_sends_correct_json_body(self):
+        zone = Zone(API_KEY, Id=789)
+        captured = []
+        def fake_req(**kwargs): captured.append(kwargs); return make_mock_response(content=b"")
+        with patch("requests.request", side_effect=fake_req):
+            zone.set_force_ssl("cdn.example.com", True)
+        self.assertEqual(captured[0]["json"]["Hostname"], "cdn.example.com")
+        self.assertTrue(captured[0]["json"]["ForceSSL"])
+
+    def test_set_force_ssl_returns_string_on_success(self):
+        zone = Zone(API_KEY, Id=789)
+        with patch("requests.request") as m:
+            m.return_value = make_mock_response(content=b"")
+            result = zone.set_force_ssl("cdn.example.com", True)
+        self.assertIsInstance(result, str)
+        self.assertIn("ssl", result.lower())
+
+    def test_set_force_ssl_returns_error_dict_on_failure(self):
+        zone = Zone(API_KEY, Id=789)
+        err = {"ErrorKey": "error", "Message": "Hostname not found"}
+        with patch("requests.request") as m:
+            m.return_value = make_mock_response(json_data=err)
+            result = zone.set_force_ssl("cdn.example.com", False)
+        self.assertEqual(result, err)
+
+
 if __name__ == "__main__":
     unittest.main()
